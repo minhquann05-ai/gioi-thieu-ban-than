@@ -16,4 +16,4 @@ Trang web được host trên GitHub Pages và có thể truy cập tại:
 [https://minhquan05-ai.github.io/gioi-thieu-ban-than/](https://minhquan05-ai.github.io/gioi-thieu-ban-than/)
 
 ## Tác giả
-- Tên: [Trương Minh Quân - 2351010178
+- Tên: Trương Minh Quân - 2351010178
