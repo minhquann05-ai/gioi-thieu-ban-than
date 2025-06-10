@@ -57,6 +57,44 @@
             display: block;
             opacity: 1;
         }
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .contact-form input {
+            padding: 10px;
+            width: 100%;
+            max-width: 300px;
+            border: 1px solid #34495e;
+            border-radius: 5px;
+        }
+        .contact-form button {
+            padding: 10px 20px;
+            background-color: #34495e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .contact-form button:hover {
+            background-color: #2c3e50;
+        }
+        .message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
         @media (max-width: 600px) {
             img {
                 width: 120px;
@@ -97,7 +135,7 @@
                 - <strong>JavaScript</strong>: Xử lý chuyển đổi giữa các section.
             </p>
             <h3>Người tạo</h3>
-            <p>Trương Minh Quân - 2351010178</a></p>
+            <p>Trương Minh Quân - 2351010178</p>
         </div>
         <div id="about" class="section">
             <h2>Về tôi</h2>
@@ -110,10 +148,11 @@
         </div>
         <div id="contact" class="section">
             <h2>Liên hệ</h2>
-            <form onsubmit="return handleSubmit(event)">
-                <input type="text" id="name" placeholder="Tên của bạn" required><br>
-                <input type="email" id="email" placeholder="Email" required><br>
+            <form class="contact-form" onsubmit="return handleSubmit(event)">
+                <input type="text" id="name" placeholder="Tên của bạn" required>
+                <input type="email" id="email" placeholder="Email" required>
                 <button type="submit">Gửi</button>
+                <div id="message" class="message"></div>
             </form>
         </div>
     </div>
@@ -153,13 +192,25 @@
                 event.preventDefault();
                 const name = document.getElementById('name').value;
                 const email = document.getElementById('email').value;
+                const messageDiv = document.getElementById('message');
+                
                 if (name && email) {
-                    alert(`Cảm ơn ${name}! Thông tin của bạn (${email}) đã được ghi nhận (chỉ minh họa).`);
+                    messageDiv.style.display = 'block';
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = `Cảm ơn ${name}! Thông tin của bạn (${email}) đã được ghi nhận (chỉ minh họa).`;
+                    setTimeout(() => {
+                        messageDiv.style.display = 'none';
+                        document.getElementById('name').value = '';
+                        document.getElementById('email').value = '';
+                    }, 3000);
                 } else {
-                    alert('Vui lòng nhập đầy đủ tên và email!');
+                    messageDiv.style.display = 'block';
+                    messageDiv.className = 'message error';
+                    messageDiv.textContent = 'Vui lòng nhập đầy đủ tên và email!';
+                    setTimeout(() => {
+                        messageDiv.style.display = 'none';
+                    }, 3000);
                 }
-                document.getElementById('name').value = '';
-                document.getElementById('email').value = '';
                 return false;
             };
         });
