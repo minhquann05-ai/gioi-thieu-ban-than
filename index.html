@@ -43,13 +43,6 @@
             margin: 10px;
             border: 2px solid #34495e;
         }
-.section {
-    transition: opacity 0.3s ease;
-    opacity: 0;
-}
-.section.active {
-    opacity: 1;
-}
         .section {
             margin: 20px 0;
             background-color: white;
@@ -57,9 +50,12 @@
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             display: none;
+            transition: opacity 0.3s ease;
+            opacity: 0;
         }
         .section.active {
             display: block;
+            opacity: 1;
         }
         @media (max-width: 600px) {
             img {
@@ -78,30 +74,32 @@
         <h1>Giới thiệu bản thân</h1>
     </header>
     <nav>
-    <a onclick="showSection('home')">Trang chủ</a>
-    <a onclick="showSection('about')">Giới thiệu</a>
-    <a onclick="showSection('hobbies')">Sở thích</a>
-    <a onclick="showSection('contact')">Liên hệ</a>
-</nav>
+        <a onclick="showSection('home')">Trang chủ</a>
+        <a onclick="showSection('about')">Giới thiệu</a>
+        <a onclick="showSection('hobbies')">Sở thích</a>
+        <a onclick="showSection('contact')">Liên hệ</a>
+    </nav>
     <div class="container">
-       <div id="home" class="section active">
-    <h2>Trang Web Giới Thiệu Bản Thân</h2>
-    <p>Đây là dự án web đơn giản được tạo để giới thiệu bản thân, bao gồm các phần:</p>
-    <ul>
-        <li><strong>Trang chủ</strong>: Lời chào và thông tin cơ bản.</li>
-        <li><strong>Giới thiệu</strong>: Thông tin cá nhân (tên, tuổi, quê quán, học vấn).</li>
-        <li><strong>Sở thích</strong>: Các sở thích cá nhân.</li>
-        <li><strong>Liên hệ</strong>: Form để liên hệ (chỉ minh họa).</li>
-    </ul>
-    <h3>Công nghệ sử dụng</h3>
-    <p>
-        - <strong>HTML</strong>: Cấu trúc trang web.<br>
-        - <strong>CSS</strong>: Thiết kế giao diện và responsive.<br>
-        - <strong>JavaScript</strong>: Xử lý chuyển đổi giữa các section.
-    </p>
-    <h3>Cách truy cập</h3>
-    <p>Trang web được host trên GitHub Pages và có thể truy cập tại: <a href="https://minhquan05-ai.github.io/gioi-thieu-ban-than/" target="_blank">https://minhquan05-ai.github.io/gioi-thieu-ban-than/</a></p>
-</div>
+        <div id="home" class="section active">
+            <h2>Trang Web Giới Thiệu Bản Thân</h2>
+            <img src="https://tse1.mm.bing.net/th?id=OIP.fmvaDlYJdC43-MvaE0IyRgAAAA&pid=Api&P=0&h=180" alt="Ảnh đại diện">
+            <p>Đây là dự án web đơn giản được tạo để giới thiệu bản thân, bao gồm các phần:</p>
+            <ul>
+                <li><strong>Trang chủ</strong>: Lời chào và thông tin cơ bản.</li>
+                <li><strong>Giới thiệu</strong>: Thông tin cá nhân (tên, tuổi, quê quán, học vấn).</li>
+                <li><strong>Sở thích</strong>: Các sở thích cá nhân.</li>
+                <li><strong>Liên hệ</strong>: Form để liên hệ (chỉ minh họa).</li>
+            </ul>
+            <h3>Công nghệ sử dụng</h3>
+            <p>
+                - <strong>HTML</strong>: Cấu trúc trang web.<br>
+                - <strong>CSS</strong>: Thiết kế giao diện và responsive.<br>
+                - <strong>JavaScript</strong>: Xử lý chuyển đổi giữa các section.
+            </p>
+            <h3>Cách truy cập</h3>
+            <p>Trang web được host trên GitHub Pages và có thể truy cập tại: <a href="https://minhquan05-ai.github.io/gioi-thieu-ban-than/" target="_blank">https://minhquan05-ai.github.io/gioi-thieu-ban-than/</a></p>
+            <p><em>Lưu ý: Dự án này được thực hiện như một bài tập lập trình web.</em></p>
+        </div>
         <div id="about" class="section">
             <h2>Về tôi</h2>
             <img src="https://scontent.fsgn5-8.fna.fbcdn.net/v/t1.6435-9/125864983_606030836905069_1910986014949682769_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=xkqPBxm_r8cQ7kNvwGvA8r6&_nc_oc=AdnNDNB9vjhy9EYMraAjVGH4A8pkIjy0dPMMzEHUqybnqR5IxvBH8-hnshUQ1wHoWSw&_nc_zt=23&_nc_ht=scontent.fsgn5-8.fna&_nc_gid=EjbAMGP0nuj2xBYQ7ekAgw&oh=00_AfO-istH7k3h3Z0MQnINjT5H2j6vVZiYCYZgqRLZcf0NIg&oe=686F7ED1" alt="Ảnh đại diện">
@@ -111,48 +109,21 @@
             <h2>Sở thích</h2>
             <p>Tôi thích nghe nhạc, chơi bóng rổ và xem phim. Âm nhạc giúp tôi thư giãn, còn bóng rổ giúp tôi năng động hơn!</p>
         </div>
-
-  <div id="contact" class="section">
-    <h2>Liên hệ</h2>
-    <form onsubmit="return handleSubmit(event)">
-        <input type="text" id="name" placeholder="Tên của bạn" required><br>
-        <input type="email" id="email" placeholder="Email" required><br>
-        <button type="submit">Gửi</button>
-    </form>
-</div>
+        <div id="contact" class="section">
+            <h2>Liên hệ</h2>
+            <form onsubmit="return handleSubmit(event)">
+                <input type="text" id="name" placeholder="Tên của bạn" required><br>
+                <input type="email" id="email" placeholder="Email" required><br>
+                <button type="submit">Gửi</button>
+            </form>
+        </div>
+    </div>
     <script>
         window.addEventListener('load', function() {
-    window.showSection = function(sectionId) {
-        try {
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => section.classList.remove('active'));
-            const targetSection = document.getElementById(sectionId);
-            if (targetSection) {
-                targetSection.classList.add('active');
-            } else {
-                console.warn(`Section with ID "${sectionId}" not found.`);
-            }
-        } catch (error) {
-            console.error('Error in showSection:', error.message);
-        }
-    };
-    try {
-        window.showSection('home');
-    } catch (error) {
-        console.error('Error initializing home section:', error.message);
-    }
-});
-}
-        // Wait for DOM to load
-        window.addEventListener('load', function() {
-            // Function to show a specific section
             window.showSection = function(sectionId) {
                 try {
-                    // Get all sections
                     const sections = document.querySelectorAll('.section');
-                    // Hide all sections
                     sections.forEach(section => section.classList.remove('active'));
-                    // Show the selected section
                     const targetSection = document.getElementById(sectionId);
                     if (targetSection) {
                         targetSection.classList.add('active');
@@ -163,27 +134,27 @@
                     console.error('Error in showSection:', error.message);
                 }
             };
-            // Show home section by default
             try {
                 window.showSection('home');
             } catch (error) {
                 console.error('Error initializing home section:', error.message);
             }
+
+            function handleSubmit(event) {
+                event.preventDefault(); // Ngăn trang reload
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                if (name && email) {
+                    alert(`Cảm ơn ${name}! Thông tin của bạn (${email}) đã được ghi nhận (chỉ minh họa).`);
+                } else {
+                    alert('Vui lòng nhập đầy đủ tên và email!');
+                }
+                // Reset form
+                document.getElementById('name').value = '';
+                document.getElementById('email').value = '';
+                return false;
+            }
         });
-        function handleSubmit(event) {
-    event.preventDefault(); // Ngăn trang reload
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    if (name && email) {
-        alert(`Cảm ơn ${name}! Thông tin của bạn (${email}) đã được ghi nhận (chỉ minh họa).`);
-    } else {
-        alert('Vui lòng nhập đầy đủ tên và email!');
-    }
-    // Reset form
-    document.getElementById('name').value = '';
-    document.getElementById('email').value = '';
-    return false;
-}
     </script>
 </body>
 </html>
