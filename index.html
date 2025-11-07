@@ -1,219 +1,160 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giới thiệu bản thân</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f4f8;
-            text-align: center;
-        }
-        header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 15px;
-        }
-        nav {
-            background-color: #34495e;
-            padding: 10px;
-        }
-        nav a {
-            color: white;
-            margin: 0 15px;
-            text-decoration: none;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        nav a:hover {
-            text-decoration: underline;
-        }
-        .container {
-            padding: 20px;
-            max-width: 800px;
-            margin: auto;
-        }
-        img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            margin: 10px;
-            border: 2px solid #34495e;
-        }
-        .section {
-            margin: 20px 0;
-            background-color: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: none;
-            transition: opacity 0.3s ease;
-            opacity: 0;
-        }
-        .section.active {
-            display: block;
-            opacity: 1;
-        }
-        .contact-form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        .contact-form input {
-            padding: 10px;
-            width: 100%;
-            max-width: 300px;
-            border: 1px solid #34495e;
-            border-radius: 5px;
-        }
-        .contact-form button {
-            padding: 10px 20px;
-            background-color: #34495e;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .contact-form button:hover {
-            background-color: #2c3e50;
-        }
-        .message {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            display: none;
-        }
-        .message.success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        @media (max-width: 600px) {
-            img {
-                width: 120px;
-                height: 120px;
-            }
-            nav a {
-                display: block;
-                margin: 10px 0;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lưới số 00-99 (10x10)</title>
+  <style>
+    :root{
+      --gap:8px;
+      --cell-size:56px;
+      --accent:#0b76ef;
+      --bg:#f6f8fb;
+      --cell-bg:#ffffff;
+      --selected-bg:var(--accent);
+      --selected-color:#fff;
+    }
+
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--bg); color:#111}
+    .wrap{max-width:760px;margin:28px auto;padding:18px;background:#fff;border-radius:12px;box-shadow:0 6px 24px rgba(10,10,20,0.06)}
+    h1{font-size:18px;margin:0 0 10px}
+    .grid{display:grid;grid-template-columns:repeat(10,1fr);gap:var(--gap);margin:14px 0}
+    .cell{
+      height:var(--cell-size);display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--cell-bg);cursor:pointer;user-select:none;border:1px solid rgba(16,24,40,0.06);font-weight:600;box-shadow:0 1px 0 rgba(16,24,40,0.02);
+      transition:transform .08s ease, box-shadow .08s ease, background .12s ease, color .12s ease;
+    }
+    .cell:active{transform:translateY(1px)}
+    .cell.selected{background:var(--selected-bg);color:var(--selected-color);box-shadow:0 6px 18px rgba(11,118,239,0.14)}
+    .controls{display:flex;gap:10px;align-items:center;margin-top:12px}
+    button.btn{padding:10px 14px;border-radius:8px;border:0;font-weight:600;cursor:pointer}
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-ghost{background:transparent;border:1px solid rgba(16,24,40,0.08)}
+    .info{margin-left:auto;font-size:13px;color:#444}
+    .result{margin-top:14px}
+    .result textarea{width:100%;height:72px;padding:10px;border-radius:8px;border:1px solid rgba(16,24,40,0.06);resize:vertical}
+    .mini{font-size:13px;color:#666;margin-top:6px}
+    @media (max-width:600px){:root{--cell-size:46px} .wrap{margin:10px;padding:12px}}
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Giới thiệu bản thân</h1>
-    </header>
-    <nav>
-        <a onclick="showSection('home')">Trang chủ</a>
-        <a onclick="showSection('about')">Giới thiệu</a>
-        <a onclick="showSection('hobbies')">Sở thích</a>
-        <a onclick="showSection('contact')">Liên hệ</a>
-    </nav>
-    <div class="container">
-        <div id="home" class="section active">
-            <h2>Trang Web Giới Thiệu Bản Thân</h2>
-            <img src="https://tse1.mm.bing.net/th?id=OIP.fmvaDlYJdC43-MvaE0IyRgAAAA&pid=Api&P=0&h=180" alt="Ảnh đại diện">
-            <p>Đây là dự án web đơn giản được tạo để giới thiệu bản thân, bao gồm các phần:</p>
-            <ul>
-                <li><strong>Trang chủ</strong>: Lời chào và thông tin cơ bản.</li>
-                <li><strong>Giới thiệu</strong>: Thông tin cá nhân (tên, tuổi, quê quán, học vấn).</li>
-                <li><strong>Sở thích</strong>: Các sở thích cá nhân.</li>
-                <li><strong>Liên hệ</strong>: Form để liên hệ (chỉ minh họa).</li>
-            </ul>
-            <h3>Công nghệ sử dụng</h3>
-            <p>
-                - <strong>HTML</strong>: Cấu trúc trang web.<br>
-                - <strong>CSS</strong>: Thiết kế giao diện và responsive.<br>
-                - <strong>JavaScript</strong>: Xử lý chuyển đổi giữa các section.
-            </p>
-            <h3>Người tạo</h3>
-            <p>Trương Minh Quân - 2351010178</p>
-        </div>
-        <div id="about" class="section">
-            <h2>Về tôi</h2>
-            <img src="https://scontent.fsgn5-8.fna.fbcdn.net/v/t1.6435-9/125864983_606030836905069_1910986014949682769_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=xkqPBxm_r8cQ7kNvwGvA8r6&_nc_oc=AdnNDNB9vjhy9EYMraAjVGH4A8pkIjy0dPMMzEHUqybnqR5IxvBH8-hnshUQ1wHoWSw&_nc_zt=23&_nc_ht=scontent.fsgn5-8.fna&_nc_gid=EjbAMGP0nuj2xBYQ7ekAgw&oh=00_AfO-istH7k3h3Z0MQnINjT5H2j6vVZiYCYZgqRLZcf0NIg&oe=686F7ED1" alt="Ảnh đại diện">
-            <p>Tôi là Trương Minh Quân, 20 tuổi, sinh sống tại TPHCM. Hiện tôi đang là sinh viên năm 2 tại trường Đại học mở TPHCM với MSSV: 2351010178, chuyên ngành Khoa học máy tính.</p>
-        </div>
-        <div id="hobbies" class="section">
-            <h2>Sở thích</h2>
-            <p>Tôi thích nghe nhạc, chơi bóng rổ và xem phim. Âm nhạc giúp tôi thư giãn, còn bóng rổ giúp tôi năng động hơn!</p>
-        </div>
-        <div id="contact" class="section">
-            <h2>Liên hệ</h2>
-            <form class="contact-form" onsubmit="return handleSubmit(event)">
-                <input type="text" id="name" placeholder="Tên của bạn" required>
-                <input type="email" id="email" placeholder="Email" required>
-                <button type="submit">Gửi</button>
-                <div id="message" class="message"></div>
-            </form>
-        </div>
-    </div>
-    <script>
-        window.addEventListener('load', function() {
-            window.showSection = function(sectionId) {
-                try {
-                    const sections = document.querySelectorAll('.section');
-                    sections.forEach(section => {
-                        section.classList.remove('active');
-                        setTimeout(() => {
-                            if (!section.classList.contains('active')) {
-                                section.style.display = 'none';
-                            }
-                        }, 300);
-                    });
-                    const targetSection = document.getElementById(sectionId);
-                    if (targetSection) {
-                        targetSection.style.display = 'block';
-                        setTimeout(() => {
-                            targetSection.classList.add('active');
-                        }, 10);
-                    } else {
-                        console.warn(`Section with ID "${sectionId}" not found.`);
-                    }
-                } catch (error) {
-                    console.error('Error in showSection:', error.message);
-                }
-            };
-            try {
-                window.showSection('home');
-            } catch (error) {
-                console.error('Error initializing home section:', error.message);
-            }
+  <div class="wrap">
+    <h1>Chọn số (00 - 99) — lưới 10 x 10</h1>
+    <div id="grid" class="grid" role="grid" aria-label="Lưới số 00 đến 99"></div>
 
-            window.handleSubmit = function(event) {
-                event.preventDefault();
-                const name = document.getElementById('name').value;
-                const email = document.getElementById('email').value;
-                const messageDiv = document.getElementById('message');
-                
-                if (name && email) {
-                    messageDiv.style.display = 'block';
-                    messageDiv.className = 'message success';
-                    messageDiv.textContent = `Cảm ơn ${name}! Thông tin của bạn (${email}) đã được ghi nhận.`;
-                    setTimeout(() => {
-                        messageDiv.style.display = 'none';
-                        document.getElementById('name').value = '';
-                        document.getElementById('email').value = '';
-                    }, 3000);
-                } else {
-                    messageDiv.style.display = 'block';
-                    messageDiv.className = 'message error';
-                    messageDiv.textContent = 'Vui lòng nhập đầy đủ tên và email!';
-                    setTimeout(() => {
-                        messageDiv.style.display = 'none';
-                    }, 3000);
-                }
-                return false;
-            };
-        });
-    </script>
+    <div class="controls">
+      <button id="doneBtn" class="btn btn-primary">Hoàn tất</button>
+      <button id="copyBtn" class="btn btn-ghost">Sao chép</button>
+      <button id="clearBtn" class="btn btn-ghost">Xóa chọn</button>
+      <div class="info"><span id="count">0</span> đã chọn</div>
+    </div>
+
+    <div class="result">
+      <label class="mini">Kết quả (dạng):</label>
+      <textarea id="output" readonly placeholder="Nhấn 'Hoàn tất' để hiển thị các số đã chọn"></textarea>
+      <div class="mini">Ví dụ: 00, 01, 02, ...</div>
+    </div>
+  </div>
+
+  <script>
+    // Tạo lưới 00..99
+    const grid = document.getElementById('grid');
+    const selected = new Set();
+    const countEl = document.getElementById('count');
+    const output = document.getElementById('output');
+    const doneBtn = document.getElementById('doneBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const clearBtn = document.getElementById('clearBtn');
+
+    function pad(n){ return n.toString().padStart(2,'0'); }
+
+    for(let i=0;i<100;i++){
+      const val = pad(i);
+      const cell = document.createElement('button');
+      cell.className = 'cell';
+      cell.type = 'button';
+      cell.dataset.value = val;
+      cell.textContent = val;
+      cell.setAttribute('aria-pressed','false');
+      cell.addEventListener('click', ()=> toggleCell(cell));
+      cell.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCell(cell); }
+      });
+      grid.appendChild(cell);
+    }
+
+    function toggleCell(cell){
+      const v = cell.dataset.value;
+      if(selected.has(v)){
+        selected.delete(v);
+        cell.classList.remove('selected');
+        cell.setAttribute('aria-pressed','false');
+      } else {
+        selected.add(v);
+        cell.classList.add('selected');
+        cell.setAttribute('aria-pressed','true');
+      }
+      countEl.textContent = selected.size;
+    }
+
+    // Sắp xếp theo giá trị tăng dần khi in
+    function getSortedSelected(){
+      return Array.from(selected).sort((a,b)=> Number(a) - Number(b));
+    }
+
+    doneBtn.addEventListener('click', ()=>{
+      const arr = getSortedSelected();
+      const text = arr.join(', ');
+      output.value = text;
+      // focus and select so user can copy easily
+      output.focus();
+      output.select();
+    });
+
+    copyBtn.addEventListener('click', async ()=>{
+      const text = output.value || getSortedSelected().join(', ');
+      if(!text){ alert('Chưa có số nào để sao chép.'); return; }
+      try{
+        await navigator.clipboard.writeText(text);
+        copyBtn.textContent = 'Đã sao chép!';
+        setTimeout(()=> copyBtn.textContent = 'Sao chép', 1200);
+      }catch(e){
+        // fallback
+        output.select();
+        document.execCommand('copy');
+        copyBtn.textContent = 'Đã sao chép!';
+        setTimeout(()=> copyBtn.textContent = 'Sao chép', 1200);
+      }
+    });
+
+    clearBtn.addEventListener('click', ()=>{
+      if(selected.size === 0) return;
+      // xóa lớp selected trên các ô
+      document.querySelectorAll('.cell.selected').forEach(c=> { c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
+      selected.clear();
+      countEl.textContent = '0';
+      output.value = '';
+    });
+
+    // Hỗ trợ nhấn số nhanh: phím 0..9 để jump lựa chọn (chỉ ví dụ nhỏ)
+    // Không cần thiết nhưng tiện: nếu gõ hai chữ số nhanh sẽ toggle ô tương ứng
+    let keyBuffer = '';
+    let keyTimer = null;
+    window.addEventListener('keydown', (e)=>{
+      if(e.key >= '0' && e.key <= '9'){
+        keyBuffer += e.key;
+        if(keyTimer) clearTimeout(keyTimer);
+        keyTimer = setTimeout(()=> { keyBuffer = ''; keyTimer = null; }, 700);
+        if(keyBuffer.length === 2){
+          const v = keyBuffer;
+          // tìm ô có giá trị v
+          const cell = Array.from(document.querySelectorAll('.cell')).find(c=> c.dataset.value === v);
+          if(cell) { toggleCell(cell); }
+          keyBuffer = '';
+          if(keyTimer) { clearTimeout(keyTimer); keyTimer = null; }
+        }
+      }
+    });
+
+  </script>
 </body>
 </html>
