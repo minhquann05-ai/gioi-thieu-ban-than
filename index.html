@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Lưới số 00-99 (10x10)</title>
+  <title>TESTING...</title>
   <style>
     :root{
       --gap:8px;
@@ -13,18 +13,45 @@
       --cell-bg:#ffffff;
       --selected-bg:var(--accent);
       --selected-color:#fff;
+      --separator-width: 20px; /* Độ rộng khoảng trắng giữa 2 bên */
     }
 
     html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--bg); color:#111}
-    .wrap{max-width:760px;margin:28px auto;padding:18px;background:#fff;border-radius:12px;box-shadow:0 6px 24px rgba(10,10,20,0.06)}
+    .wrap{max-width:800px;margin:28px auto;padding:18px;background:#fff;border-radius:12px;box-shadow:0 6px 24px rgba(10,10,20,0.06)}
     h1{font-size:18px;margin:0 0 10px}
-    .grid{display:grid;grid-template-columns:repeat(10,1fr);gap:var(--gap);margin:14px 0}
+
+    /* --- CẤU HÌNH GRID MỚI --- */
+    .grid {
+      display: grid;
+      /* 5 cột trái - 1 cột ngăn cách - 5 cột phải */
+      grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr);
+      gap: var(--gap);
+      margin: 14px 0;
+    }
+
+    /* --- STYLE VÁCH NGĂN --- */
+    .separator {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    /* Tạo đường kẻ mờ ở giữa vách ngăn */
+    .separator::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0; left: 50%;
+      width: 10px;
+      background-color: #e0e6ed; /* Màu đường kẻ */
+      transform: translateX(-50%);
+    }
+
     .cell{
       height:var(--cell-size);display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--cell-bg);cursor:pointer;user-select:none;border:1px solid rgba(16,24,40,0.06);font-weight:600;box-shadow:0 1px 0 rgba(16,24,40,0.02);
       transition:transform .08s ease, box-shadow .08s ease, background .12s ease, color .12s ease;
     }
     .cell:active{transform:translateY(1px)}
     .cell.selected{background:var(--selected-bg);color:var(--selected-color);box-shadow:0 6px 18px rgba(11,118,239,0.14)}
+    
     .controls{display:flex;gap:10px;align-items:center;margin-top:12px}
     button.btn{padding:10px 14px;border-radius:8px;border:0;font-weight:600;cursor:pointer}
     .btn-primary{background:var(--accent);color:#fff}
@@ -33,12 +60,16 @@
     .result{margin-top:14px}
     .result textarea{width:100%;height:72px;padding:10px;border-radius:8px;border:1px solid rgba(16,24,40,0.06);resize:vertical}
     .mini{font-size:13px;color:#666;margin-top:6px}
-    @media (max-width:600px){:root{--cell-size:46px} .wrap{margin:10px;padding:12px}}
+
+    @media (max-width:600px){
+        :root{--cell-size:40px; --gap: 4px; --separator-width: 10px;} 
+        .wrap{margin:10px;padding:12px}
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Chọn số (00 - 99) — lưới 10 x 10</h1>
+    <h1>Number APP Test</h1>
     <div id="grid" class="grid" role="grid" aria-label="Lưới số 00 đến 99"></div>
 
     <div class="controls">
@@ -80,6 +111,14 @@
         if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCell(cell); }
       });
       grid.appendChild(cell);
+
+      // --- LOGIC MỚI: CHÈN VÁCH NGĂN ---
+      // Nếu số hiện tại có hàng đơn vị là 4 (ví dụ 04, 14...), chèn thêm separator vào ngay sau nó
+      if (i % 10 === 4) {
+          const sep = document.createElement('div');
+          sep.className = 'separator';
+          grid.appendChild(sep);
+      }
     }
 
     function toggleCell(cell){
@@ -105,7 +144,6 @@
       const arr = getSortedSelected();
       const text = arr.join(', ');
       output.value = text;
-      // focus and select so user can copy easily
       output.focus();
       output.select();
     });
@@ -118,7 +156,6 @@
         copyBtn.textContent = 'Đã sao chép!';
         setTimeout(()=> copyBtn.textContent = 'Sao chép', 1200);
       }catch(e){
-        // fallback
         output.select();
         document.execCommand('copy');
         copyBtn.textContent = 'Đã sao chép!';
@@ -128,15 +165,13 @@
 
     clearBtn.addEventListener('click', ()=>{
       if(selected.size === 0) return;
-      // xóa lớp selected trên các ô
       document.querySelectorAll('.cell.selected').forEach(c=> { c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
       selected.clear();
       countEl.textContent = '0';
       output.value = '';
     });
 
-    // Hỗ trợ nhấn số nhanh: phím 0..9 để jump lựa chọn (chỉ ví dụ nhỏ)
-    // Không cần thiết nhưng tiện: nếu gõ hai chữ số nhanh sẽ toggle ô tương ứng
+    // Hỗ trợ nhấn số nhanh
     let keyBuffer = '';
     let keyTimer = null;
     window.addEventListener('keydown', (e)=>{
@@ -146,7 +181,6 @@
         keyTimer = setTimeout(()=> { keyBuffer = ''; keyTimer = null; }, 700);
         if(keyBuffer.length === 2){
           const v = keyBuffer;
-          // tìm ô có giá trị v
           const cell = Array.from(document.querySelectorAll('.cell')).find(c=> c.dataset.value === v);
           if(cell) { toggleCell(cell); }
           keyBuffer = '';
@@ -154,8 +188,6 @@
         }
       }
     });
-
   </script>
 </body>
 </html>
-
