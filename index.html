@@ -1,4 +1,169 @@
-if(!text){ alert('Chưa có số nào để sao chép.'); return; }
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lưới số 00-99 (Tự động lưu)</title>
+  <style>
+    :root{
+      --gap:8px;
+      --cell-size:56px;
+      --accent:#0b76ef;
+      --bg:#f6f8fb;
+      --cell-bg:#ffffff;
+      --selected-bg:var(--accent);
+      --selected-color:#fff;
+      --separator-width: 20px;
+    }
+
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--bg); color:#111}
+    .wrap{max-width:800px;margin:28px auto;padding:18px;background:#fff;border-radius:12px;box-shadow:0 6px 24px rgba(10,10,20,0.06)}
+    h1{font-size:18px;margin:0 0 10px}
+
+    /* Grid chia 5 - 1 - 5 */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr);
+      gap: var(--gap);
+      margin: 14px 0;
+    }
+
+    .separator {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    .separator::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0; left: 50%;
+      width: 1px;
+      background-color: #e0e6ed;
+      transform: translateX(-50%);
+    }
+
+    .cell{
+      height:var(--cell-size);display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--cell-bg);cursor:pointer;user-select:none;border:1px solid rgba(16,24,40,0.06);font-weight:600;box-shadow:0 1px 0 rgba(16,24,40,0.02);
+      transition:transform .08s ease, box-shadow .08s ease, background .12s ease, color .12s ease;
+    }
+    .cell:active{transform:translateY(1px)}
+    .cell.selected{background:var(--selected-bg);color:var(--selected-color);box-shadow:0 6px 18px rgba(11,118,239,0.14)}
+    
+    .controls{display:flex;gap:10px;align-items:center;margin-top:12px}
+    button.btn{padding:10px 14px;border-radius:8px;border:0;font-weight:600;cursor:pointer}
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-ghost{background:transparent;border:1px solid rgba(16,24,40,0.08)}
+    .info{margin-left:auto;font-size:13px;color:#444}
+    .result{margin-top:14px}
+    .result textarea{width:100%;height:72px;padding:10px;border-radius:8px;border:1px solid rgba(16,24,40,0.06);resize:vertical}
+    .mini{font-size:13px;color:#666;margin-top:6px}
+
+    @media (max-width:600px){
+        :root{--cell-size:40px; --gap: 4px; --separator-width: 10px;} 
+        .wrap{margin:10px;padding:12px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Chọn số (00 - 99) — Tự động lưu</h1>
+    <div id="grid" class="grid" role="grid" aria-label="Lưới số 00 đến 99"></div>
+
+    <div class="controls">
+      <button id="doneBtn" class="btn btn-primary">Hoàn tất</button>
+      <button id="copyBtn" class="btn btn-ghost">Sao chép</button>
+      <button id="clearBtn" class="btn btn-ghost">Xóa chọn</button>
+      <div class="info"><span id="count">0</span> đã chọn</div>
+      </div>
+
+    <div class="result">
+      <label class="mini">Kết quả (dạng):</label>
+      <textarea id="output" readonly placeholder="Nhấn 'Hoàn tất' để hiển thị các số đã chọn"></textarea>
+      <div class="mini">Ví dụ: 00, 01, 02, ...</div>
+    </div>
+  </div>
+
+  <script>
+    const grid = document.getElementById('grid');
+    const selected = new Set();
+    const countEl = document.getElementById('count');
+    const output = document.getElementById('output');
+    const doneBtn = document.getElementById('doneBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const STORAGE_KEY = 'my_grid_data_v1'; // Khóa để lưu dữ liệu
+
+    function pad(n){ return n.toString().padStart(2,'0'); }
+
+    // --- 1. HÀM LƯU DỮ LIỆU ---
+    function saveData() {
+        const dataToSave = Array.from(selected);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+        
+        // Cập nhật luôn ô kết quả để người dùng thấy ngay (tuỳ chọn)
+        const arr = getSortedSelected();
+        if(arr.length > 0) {
+             output.value = arr.join(', ');
+        } else {
+             output.value = '';
+        }
+    }
+
+    // --- 2. HÀM TẠO GRID ---
+    for(let i=0;i<100;i++){
+      const val = pad(i);
+      const cell = document.createElement('button');
+      cell.className = 'cell';
+      cell.type = 'button';
+      cell.dataset.value = val;
+      cell.textContent = val;
+      cell.setAttribute('aria-pressed','false');
+      cell.addEventListener('click', ()=> toggleCell(cell));
+      cell.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCell(cell); }
+      });
+      grid.appendChild(cell);
+
+      // Vách ngăn sau số tận cùng là 4
+      if (i % 10 === 4) {
+          const sep = document.createElement('div');
+          sep.className = 'separator';
+          grid.appendChild(sep);
+      }
+    }
+
+    function toggleCell(cell){
+      const v = cell.dataset.value;
+      if(selected.has(v)){
+        selected.delete(v);
+        cell.classList.remove('selected');
+        cell.setAttribute('aria-pressed','false');
+      } else {
+        selected.add(v);
+        cell.classList.add('selected');
+        cell.setAttribute('aria-pressed','true');
+      }
+      countEl.textContent = selected.size;
+      
+      // Gọi hàm lưu mỗi khi bấm
+      saveData();
+    }
+
+    function getSortedSelected(){
+      return Array.from(selected).sort((a,b)=> Number(a) - Number(b));
+    }
+
+    doneBtn.addEventListener('click', ()=>{
+      const arr = getSortedSelected();
+      const text = arr.join(', ');
+      output.value = text;
+      output.focus();
+      output.select();
+    });
+
+    copyBtn.addEventListener('click', async ()=>{
+      const text = output.value || getSortedSelected().join(', ');
+          if(!text){ alert('Chưa có số nào để sao chép.'); return; }
       try{
         await navigator.clipboard.writeText(text);
         copyBtn.textContent = 'Đã sao chép!';
