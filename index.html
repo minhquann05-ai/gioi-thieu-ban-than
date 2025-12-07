@@ -53,6 +53,15 @@
     button.btn{padding:10px 14px;border-radius:8px;border:0;font-weight:600;cursor:pointer}
     .btn-primary{background:var(--accent);color:#fff}
     .btn-ghost{background:transparent;border:1px solid rgba(16,24,40,0.08)}
+    
+    /* Style cho nút bị vô hiệu hóa */
+    button.btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none;
+    }
+
     .info{margin-left:auto;font-size:13px;color:#444}
     .result{margin-top:14px}
     .result textarea{width:100%;height:72px;padding:10px;border-radius:8px;border:1px solid rgba(16,24,40,0.06);resize:vertical}
@@ -73,8 +82,9 @@
       <button id="doneBtn" class="btn btn-primary">Hoàn tất</button>
       <button id="copyBtn" class="btn btn-ghost">Sao chép</button>
       <button id="clearBtn" class="btn btn-ghost">Xóa chọn</button>
+      <button id="undoBtn" class="btn btn-ghost" disabled>Hoàn tác</button>
       <div class="info"><span id="count">0</span> đã chọn</div>
-      </div>
+    </div>
 
     <div class="result">
       <label class="mini">Kết quả (dạng):</label>
@@ -91,25 +101,33 @@
     const doneBtn = document.getElementById('doneBtn');
     const copyBtn = document.getElementById('copyBtn');
     const clearBtn = document.getElementById('clearBtn');
-    const STORAGE_KEY = 'my_grid_data_v1'; // Khóa để lưu dữ liệu
+    const undoBtn = document.getElementById('undoBtn'); // Thêm nút Hoàn tác
+    const STORAGE_KEY = 'my_grid_data_v1';
+    const UNDO_STORAGE_KEY = 'my_grid_undo_v1'; // Khóa để lưu trạng thái trước khi Clear
 
     function pad(n){ return n.toString().padStart(2,'0'); }
 
-    // --- 1. HÀM LƯU DỮ LIỆU ---
-    function saveData() {
-        const dataToSave = Array.from(selected);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
-        
-        // Cập nhật luôn ô kết quả để người dùng thấy ngay (tuỳ chọn)
+    // --- Cập nhật UI & Lưu dữ liệu ---
+    function updateUI() {
+        countEl.textContent = selected.size;
         const arr = getSortedSelected();
         if(arr.length > 0) {
-             output.value = arr.join(', ');
+            output.value = arr.join(', ');
         } else {
-             output.value = '';
+            output.value = '';
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+        
+        // Vô hiệu hóa nút Hoàn tác sau khi có thay đổi thông thường
+        // Trừ khi nó được kích hoạt bởi hành động Clear
+        if (undoBtn.hasAttribute('data-cleared')) {
+             // Giữ trạng thái kích hoạt sau Clear
+        } else {
+            undoBtn.disabled = true;
         }
     }
-
-    // --- 2. HÀM TẠO GRID ---
+    
+    // --- HÀM TẠO GRID ---
     for(let i=0;i<100;i++){
       const val = pad(i);
       const cell = document.createElement('button');
@@ -143,10 +161,11 @@
         cell.classList.add('selected');
         cell.setAttribute('aria-pressed','true');
       }
-      countEl.textContent = selected.size;
       
-      // Gọi hàm lưu mỗi khi bấm
-      saveData();
+      // Xóa cờ trạng thái Hoàn tác và vô hiệu hóa nút Hoàn tác khi có lựa chọn mới
+      undoBtn.removeAttribute('data-cleared');
+      undoBtn.disabled = true; 
+      updateUI();
     }
 
     function getSortedSelected(){
@@ -163,7 +182,7 @@
 
     copyBtn.addEventListener('click', async ()=>{
       const text = output.value || getSortedSelected().join(', ');
-          if(!text){ alert('Chưa có số nào để sao chép.'); return; }
+        if(!text){ alert('Chưa có số nào để sao chép.'); return; }
       try{
         await navigator.clipboard.writeText(text);
         copyBtn.textContent = 'Đã sao chép!';
@@ -176,15 +195,63 @@
       }
     });
 
+    // --- Hành động XÓA CHỌN ---
     clearBtn.addEventListener('click', ()=>{
       if(selected.size === 0) return;
+      
+      // 1. Lưu trạng thái hiện tại (trước khi clear) vào localStorage cho Hoàn tác
+      const currentState = getSortedSelected();
+      localStorage.setItem(UNDO_STORAGE_KEY, JSON.stringify(currentState));
+
+      // 2. Xóa lựa chọn trên UI và trong Set
       document.querySelectorAll('.cell.selected').forEach(c=> { c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
       selected.clear();
-      countEl.textContent = '0';
-      output.value = '';
-      
-      // Lưu lại trạng thái rỗng
-      saveData();
+
+      // 3. Cập nhật UI (sẽ tự động lưu trạng thái rỗng vào STORAGE_KEY)
+      updateUI();
+
+      // 4. Kích hoạt nút Hoàn tác và đánh dấu trạng thái (data-cleared)
+      undoBtn.disabled = false;
+      undoBtn.setAttribute('data-cleared', 'true');
+    });
+
+    // --- Hành động HOÀN TÁC ---
+    undoBtn.addEventListener('click', ()=>{
+        if (undoBtn.disabled) return;
+        
+        const saved = localStorage.getItem(UNDO_STORAGE_KEY);
+        if (saved) {
+            try {
+                const arr = JSON.parse(saved);
+
+                // 1. Xóa lựa chọn hiện tại (đang rỗng)
+                document.querySelectorAll('.cell.selected').forEach(c=> { c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
+                selected.clear();
+
+                // 2. Khôi phục lại các lựa chọn từ dữ liệu Hoàn tác
+                arr.forEach(val => {
+                    selected.add(val);
+                    const cell = document.querySelector(`.cell[data-value="${val}"]`);
+                    if(cell) {
+                        cell.classList.add('selected');
+                        cell.setAttribute('aria-pressed', 'true');
+                    }
+                });
+
+                // 3. Cập nhật UI (sẽ tự động lưu lại trạng thái mới khôi phục)
+                updateUI();
+
+                // 4. Vô hiệu hóa nút Hoàn tác và xóa cờ trạng thái
+                undoBtn.disabled = true;
+                undoBtn.removeAttribute('data-cleared');
+                
+                // Xóa dữ liệu Hoàn tác sau khi dùng
+                localStorage.removeItem(UNDO_STORAGE_KEY);
+            } catch (e) {
+                console.error("Lỗi khi hoàn tác:", e);
+                localStorage.removeItem(UNDO_STORAGE_KEY);
+            }
+        }
     });
 
     // Hỗ trợ phím tắt
@@ -205,7 +272,7 @@
       }
     });
 
-    // --- 3. HÀM KHÔI PHỤC DỮ LIỆU KHI LOAD LẠI TRANG ---
+    // --- HÀM KHÔI PHỤC DỮ LIỆU KHI LOAD LẠI TRANG ---
     function loadData() {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
@@ -213,24 +280,29 @@
                 const arr = JSON.parse(saved);
                 arr.forEach(val => {
                     selected.add(val);
-                    // Tìm ô tương ứng để tô màu
                     const cell = document.querySelector(`.cell[data-value="${val}"]`);
                     if(cell) {
                         cell.classList.add('selected');
                         cell.setAttribute('aria-pressed', 'true');
                     }
                 });
-                // Cập nhật số lượng
-                countEl.textContent = selected.size;
-                // Cập nhật ô text kết quả
-                if (selected.size > 0) {
-                    output.value = getSortedSelected().join(', ');
-                }
+                updateUI(); // Cập nhật số lượng và ô kết quả
             } catch (e) {
                 console.error("Lỗi khi tải dữ liệu cũ:", e);
-                localStorage.removeItem(STORAGE_KEY); // Xóa nếu dữ liệu lỗi
+                localStorage.removeItem(STORAGE_KEY);
             }
         }
+        
+        // Kiểm tra xem có dữ liệu Hoàn tác đang chờ không.
+        // Tuy nhiên, theo yêu cầu, nút Hoàn tác CHỈ mở khi người dùng nhấn 'Xóa chọn' gần nhất
+        // (tức là trong phiên làm việc hiện tại). 
+        // Nếu load lại trang, ta sẽ giữ nút Hoàn tác bị disabled theo logic mặc định, 
+        // dù dữ liệu UNDO_STORAGE_KEY có thể còn.
+        // Nếu muốn giữ trạng thái kích hoạt sau khi reload, ta cần thêm logic kiểm tra UNDO_STORAGE_KEY ở đây.
+        // Theo yêu cầu hiện tại, tôi giữ logic Hoàn tác chỉ áp dụng cho hành động "Xóa chọn" trong phiên hiện tại.
+        undoBtn.disabled = true;
+        undoBtn.removeAttribute('data-cleared');
+        localStorage.removeItem(UNDO_STORAGE_KEY); // Xóa dữ liệu undo cũ để chỉ kích hoạt sau Clear mới
     }
 
     // Chạy hàm load ngay khi mở web
