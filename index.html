@@ -1,104 +1,194 @@
 <!doctype html>
+
 <html lang="vi">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Lưới số 00-99 (Đồng bộ Firebase)</title>
-  <style>
-    :root{
-      --gap:8px;
-      --cell-size:56px;
-      --accent:#0b76ef;
-      --bg:#f6f8fb;
-      --cell-bg:#ffffff;
-      --selected-bg:var(--accent);
-      --selected-color:#fff;
-      --separator-width: 20px;
-    }
 
-    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--bg); color:#111}
-    .wrap{max-width:800px;margin:28px auto;padding:18px;background:#fff;border-radius:12px;box-shadow:0 6px 24px rgba(10,10,20,0.06)}
-    h1{font-size:18px;margin:0 0 10px}
+  <meta charset="utf-8" />
 
-    /* Grid chia 5 - 1 - 5 */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr);
-      gap: var(--gap);
-      margin: 14px 0;
-    }
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    .separator {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-    .separator::after {
-      content: "";
-      position: absolute;
-      top: 0; bottom: 0; left: 50%;
-      width: 1px;
-      background-color: #e0e6ed;
-      transform: translateX(-50%);
-    }
+  <title>Lưới số 00-99 (Tự động lưu)</title>
 
-    .cell{
-      height:var(--cell-size);display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--cell-bg);cursor:pointer;user-select:none;border:1px solid rgba(16,24,40,0.06);font-weight:600;box-shadow:0 1px 0 rgba(16,24,40,0.02);
-      transition:transform .08s ease, box-shadow .08s ease, background .12s ease, color .12s ease;
-    }
-    .cell:active{transform:translateY(1px)}
-    .cell.selected{background:var(--selected-bg);color:var(--selected-color);box-shadow:0 6px 18px rgba(11,118,239,0.14)}
-    
-    .controls{display:flex;gap:10px;align-items:center;margin-top:12px}
-    button.btn{padding:10px 14px;border-radius:8px;border:0;font-weight:600;cursor:pointer}
-    .btn-primary{background:var(--accent);color:#fff}
-    .btn-ghost{background:transparent;border:1px solid rgba(16,24,40,0.08)}
-    
-    /* Style cho nút bị vô hiệu hóa */
-    button.btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        box-shadow: none;
-        transform: none;
-    }
+  <style>
 
-    .info{margin-left:auto;font-size:13px;color:#444}
-    .result{margin-top:14px}
-    .result textarea{width:100%;height:72px;padding:10px;border-radius:8px;border:1px solid rgba(16,24,40,0.06);resize:vertical}
-    .mini{font-size:13px;color:#666;margin-top:6px}
+    :root{
 
-    @media (max-width:600px){
-        :root{--cell-size:40px; --gap: 4px; --separator-width: 10px;} 
-        .wrap{margin:10px;padding:12px}
-    }
-  </style>
+      --gap:8px;
+
+      --cell-size:56px;
+
+      --accent:#0b76ef;
+
+      --bg:#f6f8fb;
+
+      --cell-bg:#ffffff;
+
+      --selected-bg:var(--accent);
+
+      --selected-color:#fff;
+
+      --separator-width: 20px;
+
+    }
+
+
+
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--bg); color:#111}
+
+    .wrap{max-width:800px;margin:28px auto;padding:18px;background:#fff;border-radius:12px;box-shadow:0 6px 24px rgba(10,10,20,0.06)}
+
+    h1{font-size:18px;margin:0 0 10px}
+
+
+
+    /* Grid chia 5 - 1 - 5 */
+
+    .grid {
+
+      display: grid;
+
+      grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr);
+
+      gap: var(--gap);
+
+      margin: 14px 0;
+
+    }
+
+
+
+    .separator {
+
+      position: relative;
+
+      width: 100%;
+
+      height: 100%;
+
+    }
+
+    .separator::after {
+
+      content: "";
+
+      position: absolute;
+
+      top: 0; bottom: 0; left: 50%;
+
+      width: 1px;
+
+      background-color: #e0e6ed;
+
+      transform: translateX(-50%);
+
+    }
+
+
+
+    .cell{
+
+      height:var(--cell-size);display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--cell-bg);cursor:pointer;user-select:none;border:1px solid rgba(16,24,40,0.06);font-weight:600;box-shadow:0 1px 0 rgba(16,24,40,0.02);
+
+      transition:transform .08s ease, box-shadow .08s ease, background .12s ease, color .12s ease;
+
+    }
+
+    .cell:active{transform:translateY(1px)}
+
+    .cell.selected{background:var(--selected-bg);color:var(--selected-color);box-shadow:0 6px 18px rgba(11,118,239,0.14)}
+
+    
+
+    .controls{display:flex;gap:10px;align-items:center;margin-top:12px}
+
+    button.btn{padding:10px 14px;border-radius:8px;border:0;font-weight:600;cursor:pointer}
+
+    .btn-primary{background:var(--accent);color:#fff}
+
+    .btn-ghost{background:transparent;border:1px solid rgba(16,24,40,0.08)}
+
+    
+
+    /* Style cho nút bị vô hiệu hóa */
+
+    button.btn:disabled {
+
+        opacity: 0.5;
+
+        cursor: not-allowed;
+
+        box-shadow: none;
+
+        transform: none;
+
+    }
+
+
+
+    .info{margin-left:auto;font-size:13px;color:#444}
+
+    .result{margin-top:14px}
+
+    .result textarea{width:100%;height:72px;padding:10px;border-radius:8px;border:1px solid rgba(16,24,40,0.06);resize:vertical}
+
+    .mini{font-size:13px;color:#666;margin-top:6px}
+
+
+
+    @media (max-width:600px){
+
+        :root{--cell-size:40px; --gap: 4px; --separator-width: 10px;} 
+
+        .wrap{margin:10px;padding:12px}
+
+    }
+
+  </style>
+
 </head>
+
 <body>
-  <div class="wrap">
-    <h1>Chọn số (00 - 99) — Đồng bộ qua Firebase</h1>
-    <div id="grid" class="grid" role="grid" aria-label="Lưới số 00 đến 99"></div>
 
-    <div class="controls">
-      <button id="doneBtn" class="btn btn-primary">Hoàn tất</button>
-      <button id="copyBtn" class="btn btn-ghost">Sao chép</button>
-      <button id="clearBtn" class="btn btn-ghost">Xóa chọn</button>
-      <button id="undoBtn" class="btn btn-ghost" disabled>Hoàn tác</button>
-      <div class="info"><span id="count">0</span> đã chọn</div>
-    </div>
+  <div class="wrap">
 
-    <div class="result">
-      <label class="mini">Kết quả (dạng):</label>
-      <textarea id="output" readonly placeholder="Nhấn 'Hoàn tất' hoặc đợi để hiển thị các số đã chọn"></textarea>
-      <div class="mini">Ví dụ: 00, 01, 02, ...</div>
-    </div>
-  </div>
+    <h1>Chọn số (00 - 99) — Tự động lưu</h1>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <div id="grid" class="grid" role="grid" aria-label="Lưới số 00 đến 99"></div>
+
+
+
+    <div class="controls">
+
+      <button id="doneBtn" class="btn btn-primary">Hoàn tất</button>
+
+      <button id="copyBtn" class="btn btn-ghost">Sao chép</button>
+
+      <button id="clearBtn" class="btn btn-ghost">Xóa chọn</button>
+
+      <button id="undoBtn" class="btn btn-ghost" disabled>Hoàn tác</button>
+
+      <div class="info"><span id="count">0</span> đã chọn</div>
+
+    </div>
+
+    <div class="result">
+
+      <label class="mini">Kết quả (dạng):</label>
+
+      <textarea id="output" readonly placeholder="Nhấn 'Hoàn tất' để hiển thị các số đã chọn"></textarea>
+
+      <div class="mini">Ví dụ: 00, 01, 02, ...</div>
+
+    </div>
+
+  </div>
+
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-  
-  <script>
-    // --- CẤU HÌNH FIREBASE CỦA BẠN (PHẢI THAY THẾ) ---
-    const firebaseConfig = {
+
+  <script>
+    const firebaseConfig = {
   apiKey: "AIzaSyD-tbxT6acKrTgAqNxHyDZHW2gD06KX1CI",
   authDomain: "my-work-a159e.firebaseapp.com",
   projectId: "my-work-a159e",
@@ -108,7 +198,71 @@
   measurementId: "G-BJM8VEZCFR"
 };
 
-    // Khởi tạo Firebase
+    const grid = document.getElementById('grid');
+
+    const selected = new Set();
+
+    const countEl = document.getElementById('count');
+
+    const output = document.getElementById('output');
+
+    const doneBtn = document.getElementById('doneBtn');
+
+    const copyBtn = document.getElementById('copyBtn');
+
+    const clearBtn = document.getElementById('clearBtn');
+
+    const undoBtn = document.getElementById('undoBtn'); // Thêm nút Hoàn tác
+
+    const STORAGE_KEY = 'my_grid_data_v1';
+
+    const UNDO_STORAGE_KEY = 'my_grid_undo_v1'; // Khóa để lưu trạng thái trước khi Clear
+
+
+
+    function pad(n){ return n.toString().padStart(2,'0'); }
+
+
+
+    // --- Cập nhật UI & Lưu dữ liệu ---
+
+    function updateUI() {
+
+        countEl.textContent = selected.size;
+
+        const arr = getSortedSelected();
+
+        if(arr.length > 0) {
+
+            output.value = arr.join(', ');
+
+        } else {
+
+            output.value = '';
+
+        }
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+
+        
+
+        // Vô hiệu hóa nút Hoàn tác sau khi có thay đổi thông thường
+
+        // Trừ khi nó được kích hoạt bởi hành động Clear
+
+        if (undoBtn.hasAttribute('data-cleared')) {
+
+             // Giữ trạng thái kích hoạt sau Clear
+
+        } else {
+
+            undoBtn.disabled = true;
+
+        }
+
+    }
+
+    // Khởi tạo Firebase
     const app = firebase.initializeApp(firebaseConfig);
     const db = app.firestore();
     // Sử dụng tên collection/document để lưu trữ dữ liệu chính
@@ -163,154 +317,300 @@
             undoBtn.disabled = true;
         }
     }
-    
-    // --- HÀM TẠO GRID (GIỮ NGUYÊN) ---
-    for(let i=0;i<100;i++){
-      const val = pad(i);
-      const cell = document.createElement('button');
-      cell.className = 'cell';
-      cell.type = 'button';
-      cell.dataset.value = val;
-      cell.textContent = val;
-      cell.setAttribute('aria-pressed','false');
-      cell.addEventListener('click', ()=> toggleCell(cell));
-      cell.addEventListener('keydown', (e)=>{
-        if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCell(cell); }
-      });
-      grid.appendChild(cell);
 
-      // Vách ngăn sau số tận cùng là 4
-      if (i % 10 === 4) {
-          const sep = document.createElement('div');
-          sep.className = 'separator';
-          grid.appendChild(sep);
-      }
-    }
+    // --- HÀM TẠO GRID ---
 
-    function toggleCell(cell){
-      const v = cell.dataset.value;
-      if(selected.has(v)){
-        selected.delete(v);
-        cell.classList.remove('selected');
-        cell.setAttribute('aria-pressed','false');
-      } else {
-        selected.add(v);
-        cell.classList.add('selected');
-        cell.setAttribute('aria-pressed','true');
-      }
-      
-      // Xóa cờ trạng thái Hoàn tác và vô hiệu hóa nút Hoàn tác khi có lựa chọn mới
-      undoBtn.removeAttribute('data-cleared');
-      undoBtn.disabled = true; 
-      updateUI();
-    }
+    for(let i=0;i<100;i++){
 
-    function getSortedSelected(){
-      return Array.from(selected).sort((a,b)=> Number(a) - Number(b));
-    }
+      const val = pad(i);
 
-    doneBtn.addEventListener('click', ()=>{
-      const arr = getSortedSelected();
-      const text = arr.join(', ');
-      output.value = text;
-      output.focus();
-      output.select();
-    });
+      const cell = document.createElement('button');
 
-    copyBtn.addEventListener('click', async ()=>{
-      const text = output.value || getSortedSelected().join(', ');
-        if(!text){ alert('Chưa có số nào để sao chép.'); return; }
-      try{
-        await navigator.clipboard.writeText(text);
-        copyBtn.textContent = 'Đã sao chép!';
-        setTimeout(()=> copyBtn.textContent = 'Sao chép', 1200);
-      }catch(e){
-        output.select();
-        document.execCommand('copy');
-        copyBtn.textContent = 'Đã sao chép!';
-        setTimeout(()=> copyBtn.textContent = 'Sao chép', 1200);
-      }
-    });
+      cell.className = 'cell';
 
-    // --- Hành động XÓA CHỌN ---
-    clearBtn.addEventListener('click', ()=>{
-      if(selected.size === 0) return;
-      
-      // 1. Lưu trạng thái hiện tại (trước khi clear) vào localStorage cho Hoàn tác
-      const currentState = getSortedSelected();
-      localStorage.setItem(UNDO_STORAGE_KEY, JSON.stringify(currentState));
+      cell.type = 'button';
 
-      // 2. Xóa lựa chọn trên UI và trong Set
-      document.querySelectorAll('.cell.selected').forEach(c=> { c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
-      selected.clear();
+      cell.dataset.value = val;
 
-      // 3. Cập nhật UI (Sẽ gọi saveNewData([]) để lưu trạng thái rỗng lên Firestore)
-      updateUI();
+      cell.textContent = val;
 
-      // 4. Kích hoạt nút Hoàn tác và đánh dấu trạng thái (data-cleared)
-      undoBtn.disabled = false;
-      undoBtn.setAttribute('data-cleared', 'true');
-    });
+      cell.setAttribute('aria-pressed','false');
 
-    // --- Hành động HOÀN TÁC ---
-    undoBtn.addEventListener('click', ()=>{
-        if (undoBtn.disabled) return;
-        
-        const saved = localStorage.getItem(UNDO_STORAGE_KEY);
-        if (saved) {
-            try {
-                const arr = JSON.parse(saved);
+      cell.addEventListener('click', ()=> toggleCell(cell));
 
-                // 1. Xóa lựa chọn hiện tại (đang rỗng)
-                document.querySelectorAll('.cell.selected').forEach(c=> { c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
-                selected.clear();
+      cell.addEventListener('keydown', (e)=>{
 
-                // 2. Khôi phục lại các lựa chọn từ dữ liệu Hoàn tác
-                arr.forEach(val => {
-                    selected.add(val);
-                    const cell = document.querySelector(`.cell[data-value="${val}"]`);
-                    if(cell) {
-                        cell.classList.add('selected');
-                        cell.setAttribute('aria-pressed', 'true');
-                    }
-                });
+        if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCell(cell); }
 
-                // 3. Cập nhật UI (Sẽ gọi saveNewData(arr) để lưu lại trạng thái mới khôi phục lên Firestore)
-                updateUI();
+      });
 
-                // 4. Vô hiệu hóa nút Hoàn tác và xóa cờ trạng thái
-                undoBtn.disabled = true;
-                undoBtn.removeAttribute('data-cleared');
-                
-                // Xóa dữ liệu Hoàn tác sau khi dùng
-                localStorage.removeItem(UNDO_STORAGE_KEY);
-            } catch (e) {
-                console.error("Lỗi khi hoàn tác:", e);
-                localStorage.removeItem(UNDO_STORAGE_KEY);
-            }
-        }
-    });
+      grid.appendChild(cell);
 
-    // Hỗ trợ phím tắt (GIỮ NGUYÊN)
-    let keyBuffer = '';
-    let keyTimer = null;
-    window.addEventListener('keydown', (e)=>{
-      if(e.key >= '0' && e.key <= '9'){
-        keyBuffer += e.key;
-        if(keyTimer) clearTimeout(keyTimer);
-        keyTimer = setTimeout(()=> { keyBuffer = ''; keyTimer = null; }, 700);
-        if(keyBuffer.length === 2){
-          const v = keyBuffer;
-          const cell = Array.from(document.querySelectorAll('.cell')).find(c=> c.dataset.value === v);
-          if(cell) { toggleCell(cell); }
-          keyBuffer = '';
-          if(keyTimer) { clearTimeout(keyTimer); keyTimer = null; }
-        }
-      }
-    });
 
-    // --- HÀM KHÔI PHỤC DỮ LIỆU TỪ FIRESTORE KHI LOAD LẠI TRANG ---
-    async function loadData() {
+
+      // Vách ngăn sau số tận cùng là 4
+
+      if (i % 10 === 4) {
+
+          const sep = document.createElement('div');
+
+          sep.className = 'separator';
+
+          grid.appendChild(sep);
+
+      }
+
+    }
+
+
+
+    function toggleCell(cell){
+
+      const v = cell.dataset.value;
+
+      if(selected.has(v)){
+
+        selected.delete(v);
+
+        cell.classList.remove('selected');
+
+        cell.setAttribute('aria-pressed','false');
+
+      } else {
+
+        selected.add(v);
+
+        cell.classList.add('selected');
+
+        cell.setAttribute('aria-pressed','true');
+
+      }
+
+      
+
+      // Xóa cờ trạng thái Hoàn tác và vô hiệu hóa nút Hoàn tác khi có lựa chọn mới
+
+      undoBtn.removeAttribute('data-cleared');
+
+      undoBtn.disabled = true; 
+
+      updateUI();
+
+    }
+
+
+
+    function getSortedSelected(){
+
+      return Array.from(selected).sort((a,b)=> Number(a) - Number(b));
+
+    }
+
+
+
+    doneBtn.addEventListener('click', ()=>{
+
+      const arr = getSortedSelected();
+
+      const text = arr.join(', ');
+
+      output.value = text;
+
+      output.focus();
+
+      output.select();
+
+    });
+
+
+
+    copyBtn.addEventListener('click', async ()=>{
+
+      const text = output.value || getSortedSelected().join(', ');
+
+        if(!text){ alert('Chưa có số nào để sao chép.'); return; }
+
+      try{
+
+        await navigator.clipboard.writeText(text);
+
+        copyBtn.textContent = 'Đã sao chép!';
+
+        setTimeout(()=> copyBtn.textContent = 'Sao chép', 1200);
+
+      }catch(e){
+
+        output.select();
+
+        document.execCommand('copy');
+
+        copyBtn.textContent = 'Đã sao chép!';
+
+        setTimeout(()=> copyBtn.textContent = 'Sao chép', 1200);
+
+      }
+
+    });
+
+
+
+    // --- Hành động XÓA CHỌN ---
+
+    clearBtn.addEventListener('click', ()=>{
+
+      if(selected.size === 0) return;
+
+      
+
+      // 1. Lưu trạng thái hiện tại (trước khi clear) vào localStorage cho Hoàn tác
+
+      const currentState = getSortedSelected();
+
+      localStorage.setItem(UNDO_STORAGE_KEY, JSON.stringify(currentState));
+
+
+
+      // 2. Xóa lựa chọn trên UI và trong Set
+
+      document.querySelectorAll('.cell.selected').forEach(c=> { c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
+
+      selected.clear();
+
+
+
+      // 3. Cập nhật UI (sẽ tự động lưu trạng thái rỗng vào STORAGE_KEY)
+
+      updateUI();
+
+
+
+      // 4. Kích hoạt nút Hoàn tác và đánh dấu trạng thái (data-cleared)
+
+      undoBtn.disabled = false;
+
+      undoBtn.setAttribute('data-cleared', 'true');
+
+    });
+
+
+
+    // --- Hành động HOÀN TÁC ---
+
+    undoBtn.addEventListener('click', ()=>{
+
+        if (undoBtn.disabled) return;
+
+        
+
+        const saved = localStorage.getItem(UNDO_STORAGE_KEY);
+
+        if (saved) {
+
+            try {
+
+                const arr = JSON.parse(saved);
+
+
+
+                // 1. Xóa lựa chọn hiện tại (đang rỗng)
+
+                document.querySelectorAll('.cell.selected').forEach(c=> { c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
+
+                selected.clear();
+
+
+
+                // 2. Khôi phục lại các lựa chọn từ dữ liệu Hoàn tác
+
+                arr.forEach(val => {
+
+                    selected.add(val);
+
+                    const cell = document.querySelector(`.cell[data-value="${val}"]`);
+
+                    if(cell) {
+
+                        cell.classList.add('selected');
+
+                        cell.setAttribute('aria-pressed', 'true');
+
+                    }
+
+                });
+
+
+
+                // 3. Cập nhật UI (sẽ tự động lưu lại trạng thái mới khôi phục)
+
+                updateUI();
+
+
+
+                // 4. Vô hiệu hóa nút Hoàn tác và xóa cờ trạng thái
+
+                undoBtn.disabled = true;
+
+                undoBtn.removeAttribute('data-cleared');
+
+                
+
+                // Xóa dữ liệu Hoàn tác sau khi dùng
+
+                localStorage.removeItem(UNDO_STORAGE_KEY);
+
+            } catch (e) {
+
+                console.error("Lỗi khi hoàn tác:", e);
+
+                localStorage.removeItem(UNDO_STORAGE_KEY);
+
+            }
+
+        }
+
+    });
+
+
+
+    // Hỗ trợ phím tắt
+
+    let keyBuffer = '';
+
+    let keyTimer = null;
+
+    window.addEventListener('keydown', (e)=>{
+
+      if(e.key >= '0' && e.key <= '9'){
+
+        keyBuffer += e.key;
+
+        if(keyTimer) clearTimeout(keyTimer);
+
+        keyTimer = setTimeout(()=> { keyBuffer = ''; keyTimer = null; }, 700);
+
+        if(keyBuffer.length === 2){
+
+          const v = keyBuffer;
+
+          const cell = Array.from(document.querySelectorAll('.cell')).find(c=> c.dataset.value === v);
+
+          if(cell) { toggleCell(cell); }
+
+          keyBuffer = '';
+
+          if(keyTimer) { clearTimeout(keyTimer); keyTimer = null; }
+
+        }
+
+      }
+
+    });
+
+
+
+    // --- HÀM KHÔI PHỤC DỮ LIỆU KHI LOAD LẠI TRANG ---
+
+    async function loadData() {
         try {
             const doc = await docRef.get();
             
@@ -348,6 +648,10 @@
     // Chạy hàm load ngay khi mở web
     loadData();
 
-  </script>
+
+
+  </script>
+
 </body>
+
 </html>
