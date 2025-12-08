@@ -1,657 +1,283 @@
 <!doctype html>
-
 <html lang="vi">
-
 <head>
-
   <meta charset="utf-8" />
-
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-
-  <title>Lưới số 00-99 (Tự động lưu)</title>
+  <title>Lưới số 00-99 (Đồng bộ Firebase)</title>
 
   <style>
-
     :root{
-
       --gap:8px;
-
       --cell-size:56px;
-
       --accent:#0b76ef;
-
       --bg:#f6f8fb;
-
       --cell-bg:#ffffff;
-
       --selected-bg:var(--accent);
-
       --selected-color:#fff;
-
       --separator-width: 20px;
-
     }
 
+    body{
+      margin:0;
+      background:var(--bg);
+      font-family:Inter, system-ui, sans-serif;
+    }
 
+    .wrap{
+      max-width:800px;
+      margin:28px auto;
+      padding:18px;
+      background:#fff;
+      border-radius:12px;
+      box-shadow:0 6px 24px rgba(10,10,20,0.06);
+    }
 
-    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background:var(--bg); color:#111}
+    h1{ margin:0 0 10px; font-size:18px; }
 
-    .wrap{max-width:800px;margin:28px auto;padding:18px;background:#fff;border-radius:12px;box-shadow:0 6px 24px rgba(10,10,20,0.06)}
-
-    h1{font-size:18px;margin:0 0 10px}
-
-
-
-    /* Grid chia 5 - 1 - 5 */
-
-    .grid {
-
-      display: grid;
-
+    /* GRID chuẩn với 11 cột: 5 + separator + 5 */
+    .grid{
+      display:grid;
       grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr);
-
-      gap: var(--gap);
-
-      margin: 14px 0;
-
+      gap:var(--gap);
+      margin:14px 0;
     }
 
-
-
-    .separator {
-
-      position: relative;
-
-      width: 100%;
-
-      height: 100%;
-
+    .separator{
+      position:relative;
+      width:100%;
+      height:100%;
     }
-
-    .separator::after {
-
-      content: "";
-
-      position: absolute;
-
-      top: 0; bottom: 0; left: 50%;
-
-      width: 1px;
-
-      background-color: #e0e6ed;
-
-      transform: translateX(-50%);
-
+    .separator::after{
+      content:"";
+      position:absolute;
+      top:0; bottom:0;
+      left:50%;
+      width:1px;
+      background:#e0e6ed;
+      transform:translateX(-50%);
     }
-
-
 
     .cell{
-
-      height:var(--cell-size);display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--cell-bg);cursor:pointer;user-select:none;border:1px solid rgba(16,24,40,0.06);font-weight:600;box-shadow:0 1px 0 rgba(16,24,40,0.02);
-
-      transition:transform .08s ease, box-shadow .08s ease, background .12s ease, color .12s ease;
-
+      height:var(--cell-size);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:8px;
+      background:var(--cell-bg);
+      cursor:pointer;
+      user-select:none;
+      font-weight:600;
+      border:1px solid rgba(16,24,40,0.06);
+      box-shadow:0 1px 0 rgba(16,24,40,0.03);
+      transition:0.12s;
+    }
+    .cell.selected{
+      background:var(--selected-bg);
+      color:var(--selected-color);
+      box-shadow:0 4px 12px rgba(11,118,239,0.18);
     }
 
-    .cell:active{transform:translateY(1px)}
+    .controls{ display:flex; gap:10px; margin-top:12px; }
+    button.btn{
+      padding:10px 14px;
+      border-radius:8px;
+      border:0;
+      cursor:pointer;
+      font-weight:600;
+    }
+    .btn-primary{ background:var(--accent); color:#fff; }
+    .btn-ghost{ background:#fff; border:1px solid rgba(16,24,40,0.1); }
 
-    .cell.selected{background:var(--selected-bg);color:var(--selected-color);box-shadow:0 6px 18px rgba(11,118,239,0.14)}
-
-    
-
-    .controls{display:flex;gap:10px;align-items:center;margin-top:12px}
-
-    button.btn{padding:10px 14px;border-radius:8px;border:0;font-weight:600;cursor:pointer}
-
-    .btn-primary{background:var(--accent);color:#fff}
-
-    .btn-ghost{background:transparent;border:1px solid rgba(16,24,40,0.08)}
-
-    
-
-    /* Style cho nút bị vô hiệu hóa */
-
-    button.btn:disabled {
-
-        opacity: 0.5;
-
-        cursor: not-allowed;
-
-        box-shadow: none;
-
-        transform: none;
-
+    button.btn:disabled{
+      opacity:.5;
+      cursor:not-allowed;
     }
 
+    .info{ margin-left:auto; font-size:13px; color:#444; }
 
-
-    .info{margin-left:auto;font-size:13px;color:#444}
-
-    .result{margin-top:14px}
-
-    .result textarea{width:100%;height:72px;padding:10px;border-radius:8px;border:1px solid rgba(16,24,40,0.06);resize:vertical}
-
-    .mini{font-size:13px;color:#666;margin-top:6px}
-
-
-
-    @media (max-width:600px){
-
-        :root{--cell-size:40px; --gap: 4px; --separator-width: 10px;} 
-
-        .wrap{margin:10px;padding:12px}
-
+    .result textarea{
+      width:100%; height:72px; padding:10px;
+      border-radius:8px;
+      border:1px solid rgba(16,24,40,0.06);
+      resize:vertical;
     }
 
+    @media(max-width:600px){
+      :root{ --cell-size:40px; --gap:4px; --separator-width:12px; }
+      .wrap{ padding:12px; margin:10px; }
+    }
   </style>
-
 </head>
 
 <body>
-
   <div class="wrap">
+    <h1>Chọn số (00 - 99) — Đồng bộ qua Firebase</h1>
 
-    <h1>Chọn số (00 - 99) — Tự động lưu</h1>
-
-    <div id="grid" class="grid" role="grid" aria-label="Lưới số 00 đến 99"></div>
-
-
+    <div id="grid" class="grid" role="grid"></div>
 
     <div class="controls">
-
       <button id="doneBtn" class="btn btn-primary">Hoàn tất</button>
-
       <button id="copyBtn" class="btn btn-ghost">Sao chép</button>
-
       <button id="clearBtn" class="btn btn-ghost">Xóa chọn</button>
-
       <button id="undoBtn" class="btn btn-ghost" disabled>Hoàn tác</button>
-
       <div class="info"><span id="count">0</span> đã chọn</div>
-
     </div>
 
     <div class="result">
-
-      <label class="mini">Kết quả (dạng):</label>
-
-      <textarea id="output" readonly placeholder="Nhấn 'Hoàn tất' để hiển thị các số đã chọn"></textarea>
-
-      <div class="mini">Ví dụ: 00, 01, 02, ...</div>
-
+      <textarea id="output" readonly></textarea>
     </div>
-
   </div>
 
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
   <script>
+    // Firebase config của bạn
     const firebaseConfig = {
-  apiKey: "AIzaSyD-tbxT6acKrTgAqNxHyDZHW2gD06KX1CI",
-  authDomain: "my-work-a159e.firebaseapp.com",
-  projectId: "my-work-a159e",
-  storageBucket: "my-work-a159e.firebasestorage.app",
-  messagingSenderId: "69318636254",
-  appId: "1:69318636254:web:35a4a497ee50e6c718484f",
-  measurementId: "G-BJM8VEZCFR"
-};
+      apiKey: "AIzaSyD-tbxT6acKrTgAqNxHyDZHW2gD06KX1CI",
+      authDomain: "my-work-a159e.firebaseapp.com",
+      projectId: "my-work-a159e",
+      storageBucket: "my-work-a159e.firebasestorage.app",
+      messagingSenderId: "69318636254",
+      appId: "1:69318636254:web:35a4a497ee50e6c718484f",
+      measurementId: "G-BJM8VEZCFR"
+    };
 
-    const grid = document.getElementById('grid');
-
-    const selected = new Set();
-
-    const countEl = document.getElementById('count');
-
-    const output = document.getElementById('output');
-
-    const doneBtn = document.getElementById('doneBtn');
-
-    const copyBtn = document.getElementById('copyBtn');
-
-    const clearBtn = document.getElementById('clearBtn');
-
-    const undoBtn = document.getElementById('undoBtn'); // Thêm nút Hoàn tác
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = app.firestore();
 
     const STORAGE_KEY = 'my_grid_data_v1';
+    const UNDO_STORAGE_KEY = 'my_grid_undo_v1';
+    const docRef = db.collection("selected_numbers").doc(STORAGE_KEY);
 
-    const UNDO_STORAGE_KEY = 'my_grid_undo_v1'; // Khóa để lưu trạng thái trước khi Clear
+    const grid = document.getElementById('grid');
+    const selected = new Set();
+    const output = document.getElementById('output');
+    const countEl = document.getElementById('count');
+    const undoBtn = document.getElementById('undoBtn');
 
+    const pad = n => n.toString().padStart(2,'0');
+    const getSorted = ()=> [...selected].sort((a,b)=>a-b);
 
+    /* ------ TẠO GRID 11 CỘT: 5 + SEP + 5 ------ */
+    for(let row=0; row<10; row++){
+      for(let col=0; col<11; col++){
 
-    function pad(n){ return n.toString().padStart(2,'0'); }
-
-
-
-    // --- Cập nhật UI & Lưu dữ liệu ---
-
-    function updateUI() {
-
-        countEl.textContent = selected.size;
-
-        const arr = getSortedSelected();
-
-        if(arr.length > 0) {
-
-            output.value = arr.join(', ');
-
-        } else {
-
-            output.value = '';
-
+        // separator nằm ở cột số 5
+        if(col === 5){
+          const s = document.createElement('div');
+          s.className = "separator";
+          grid.appendChild(s);
+          continue;
         }
 
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+        const index = row * 10 + (col < 5 ? col : col - 1);
+        const val = pad(index);
 
-        
+        const btn = document.createElement('button');
+        btn.className="cell";
+        btn.dataset.value = val;
+        btn.textContent = val;
+        btn.onclick = ()=> toggle(btn);
 
-        // Vô hiệu hóa nút Hoàn tác sau khi có thay đổi thông thường
-
-        // Trừ khi nó được kích hoạt bởi hành động Clear
-
-        if (undoBtn.hasAttribute('data-cleared')) {
-
-             // Giữ trạng thái kích hoạt sau Clear
-
-        } else {
-
-            undoBtn.disabled = true;
-
-        }
-
-    }
-
-    // Khởi tạo Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = app.firestore();
-    // Sử dụng tên collection/document để lưu trữ dữ liệu chính
-    const STORAGE_KEY = 'my_grid_data_v1';
-    const UNDO_STORAGE_KEY = 'my_grid_undo_v1'; // Vẫn dùng localStorage cho tính năng Undo tạm thời
-    const docRef = db.collection("selected_numbers").doc(STORAGE_KEY);
-    
-    // --- KHAI BÁO BIẾN UI/STATE ---
-    const grid = document.getElementById('grid');
-    const selected = new Set();
-    const countEl = document.getElementById('count');
-    const output = document.getElementById('output');
-    const doneBtn = document.getElementById('doneBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const undoBtn = document.getElementById('undoBtn');
-
-    function pad(n){ return n.toString().padStart(2,'0'); }
-
-    // --- HÀM LƯU DỮ LIỆU VÀO FIRESTORE ---
-    async function saveNewData(dataArray) {
-        try {
-            await docRef.set({
-                numbers: dataArray,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            console.log("Dữ liệu đã được đồng bộ hóa thành công!");
-        } catch (e) {
-            console.error("Lỗi khi ghi dữ liệu Firestore:", e);
-            alert("Lỗi kết nối/lưu dữ liệu. Kiểm tra Firebase Config và Quy tắc!");
-        }
-    }
-
-    // --- Cập nhật UI & GỌI HÀM LƯU ---
-    function updateUI(saveToDb = true) {
-        const arr = getSortedSelected();
-        countEl.textContent = selected.size;
-        
-        if(arr.length > 0) {
-            output.value = arr.join(', ');
-        } else {
-            output.value = '';
-        }
-        
-        // GỌI HÀM LƯU VÀO FIRESTORE
-        if (saveToDb) {
-            saveNewData(arr);
-        }
-        
-        // Vô hiệu hóa nút Hoàn tác sau khi có thay đổi thông thường
-        if (!undoBtn.hasAttribute('data-cleared')) {
-            undoBtn.disabled = true;
-        }
-    }
-
-    // --- HÀM TẠO GRID ---
-
-    for(let i=0;i<100;i++){
-
-      const val = pad(i);
-
-      const cell = document.createElement('button');
-
-      cell.className = 'cell';
-
-      cell.type = 'button';
-
-      cell.dataset.value = val;
-
-      cell.textContent = val;
-
-      cell.setAttribute('aria-pressed','false');
-
-      cell.addEventListener('click', ()=> toggleCell(cell));
-
-      cell.addEventListener('keydown', (e)=>{
-
-        if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleCell(cell); }
-
-      });
-
-      grid.appendChild(cell);
-
-
-
-      // Vách ngăn sau số tận cùng là 4
-
-      if (i % 10 === 4) {
-
-          const sep = document.createElement('div');
-
-          sep.className = 'separator';
-
-          grid.appendChild(sep);
-
+        grid.appendChild(btn);
       }
-
     }
 
-
-
-    function toggleCell(cell){
-
+    /* ------ CHỌN / BỎ CHỌN ------ */
+    function toggle(cell){
       const v = cell.dataset.value;
-
       if(selected.has(v)){
-
         selected.delete(v);
-
         cell.classList.remove('selected');
-
-        cell.setAttribute('aria-pressed','false');
-
       } else {
-
         selected.add(v);
-
         cell.classList.add('selected');
-
-        cell.setAttribute('aria-pressed','true');
-
       }
-
-      
-
-      // Xóa cờ trạng thái Hoàn tác và vô hiệu hóa nút Hoàn tác khi có lựa chọn mới
-
-      undoBtn.removeAttribute('data-cleared');
-
-      undoBtn.disabled = true; 
-
+      undoBtn.disabled = true;
       updateUI();
-
     }
 
+    function updateUI(saveDb=true){
+      const arr = getSorted();
+      output.value = arr.join(', ');
+      countEl.textContent = arr.length;
 
-
-    function getSortedSelected(){
-
-      return Array.from(selected).sort((a,b)=> Number(a) - Number(b));
-
+      if(saveDb){
+        saveToDB(arr);
+      }
     }
 
-
-
-    doneBtn.addEventListener('click', ()=>{
-
-      const arr = getSortedSelected();
-
-      const text = arr.join(', ');
-
-      output.value = text;
-
-      output.focus();
-
-      output.select();
-
-    });
-
-
-
-    copyBtn.addEventListener('click', async ()=>{
-
-      const text = output.value || getSortedSelected().join(', ');
-
-        if(!text){ alert('Chưa có số nào để sao chép.'); return; }
-
+    async function saveToDB(arr){
       try{
+        await docRef.set({numbers:arr});
+      }catch(e){ console.log("Lỗi lưu:",e); }
+    }
 
-        await navigator.clipboard.writeText(text);
+    /* ---------------- NÚT ---------------- */
 
-        copyBtn.textContent = 'Đã sao chép!';
+    document.getElementById('doneBtn').onclick = ()=>{
+      output.select();
+    };
 
-        setTimeout(()=> copyBtn.textContent = 'Sao chép', 1200);
-
-      }catch(e){
-
+    document.getElementById('copyBtn').onclick = async ()=>{
+      try{
+        await navigator.clipboard.writeText(output.value);
+      }catch{
         output.select();
-
         document.execCommand('copy');
-
-        copyBtn.textContent = 'Đã sao chép!';
-
-        setTimeout(()=> copyBtn.textContent = 'Sao chép', 1200);
-
       }
+    };
 
-    });
-
-
-
-    // --- Hành động XÓA CHỌN ---
-
-    clearBtn.addEventListener('click', ()=>{
-
-      if(selected.size === 0) return;
-
-      
-
-      // 1. Lưu trạng thái hiện tại (trước khi clear) vào localStorage cho Hoàn tác
-
-      const currentState = getSortedSelected();
-
-      localStorage.setItem(UNDO_STORAGE_KEY, JSON.stringify(currentState));
-
-
-
-      // 2. Xóa lựa chọn trên UI và trong Set
-
-      document.querySelectorAll('.cell.selected').forEach(c=> { c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
-
-      selected.clear();
-
-
-
-      // 3. Cập nhật UI (sẽ tự động lưu trạng thái rỗng vào STORAGE_KEY)
-
-      updateUI();
-
-
-
-      // 4. Kích hoạt nút Hoàn tác và đánh dấu trạng thái (data-cleared)
-
+    document.getElementById('clearBtn').onclick = ()=>{
+      const old = getSorted();
+      localStorage.setItem(UNDO_STORAGE_KEY, JSON.stringify(old));
       undoBtn.disabled = false;
 
-      undoBtn.setAttribute('data-cleared', 'true');
+      selected.clear();
+      document.querySelectorAll('.cell.selected')
+              .forEach(x=>x.classList.remove('selected'));
 
-    });
+      updateUI();
+    };
 
+    undoBtn.onclick = ()=>{
+      const saved = JSON.parse(localStorage.getItem(UNDO_STORAGE_KEY));
+      if(!saved) return;
 
+      selected.clear();
+      document.querySelectorAll('.cell.selected')
+              .forEach(x=>x.classList.remove('selected'));
 
-    // --- Hành động HOÀN TÁC ---
+      saved.forEach(v=>{
+        selected.add(v);
+        const cell = document.querySelector(`.cell[data-value="${v}"]`);
+        if(cell){ cell.classList.add('selected'); }
+      });
 
-    undoBtn.addEventListener('click', ()=>{
+      updateUI();
+      undoBtn.disabled = true;
+      localStorage.removeItem(UNDO_STORAGE_KEY);
+    };
 
-        if (undoBtn.disabled) return;
-
-        
-
-        const saved = localStorage.getItem(UNDO_STORAGE_KEY);
-
-        if (saved) {
-
-            try {
-
-                const arr = JSON.parse(saved);
-
-
-
-                // 1. Xóa lựa chọn hiện tại (đang rỗng)
-
-                document.querySelectorAll('.cell.selected').forEach(c=> { c.classList.remove('selected'); c.setAttribute('aria-pressed','false'); });
-
-                selected.clear();
-
-
-
-                // 2. Khôi phục lại các lựa chọn từ dữ liệu Hoàn tác
-
-                arr.forEach(val => {
-
-                    selected.add(val);
-
-                    const cell = document.querySelector(`.cell[data-value="${val}"]`);
-
-                    if(cell) {
-
-                        cell.classList.add('selected');
-
-                        cell.setAttribute('aria-pressed', 'true');
-
-                    }
-
-                });
-
-
-
-                // 3. Cập nhật UI (sẽ tự động lưu lại trạng thái mới khôi phục)
-
-                updateUI();
-
-
-
-                // 4. Vô hiệu hóa nút Hoàn tác và xóa cờ trạng thái
-
-                undoBtn.disabled = true;
-
-                undoBtn.removeAttribute('data-cleared');
-
-                
-
-                // Xóa dữ liệu Hoàn tác sau khi dùng
-
-                localStorage.removeItem(UNDO_STORAGE_KEY);
-
-            } catch (e) {
-
-                console.error("Lỗi khi hoàn tác:", e);
-
-                localStorage.removeItem(UNDO_STORAGE_KEY);
-
-            }
-
+    /* ---------- LOAD FIREBASE KHI MỞ WEB ---------- */
+    async function load(){
+      try{
+        const doc = await docRef.get();
+        if(doc.exists){
+          const arr = doc.data().numbers;
+          arr.forEach(v=>{
+            selected.add(v);
+            const cell = document.querySelector(`.cell[data-value="${v}"]`);
+            if(cell) cell.classList.add('selected');
+          });
         }
+      }catch(e){}
 
-    });
-
-
-
-    // Hỗ trợ phím tắt
-
-    let keyBuffer = '';
-
-    let keyTimer = null;
-
-    window.addEventListener('keydown', (e)=>{
-
-      if(e.key >= '0' && e.key <= '9'){
-
-        keyBuffer += e.key;
-
-        if(keyTimer) clearTimeout(keyTimer);
-
-        keyTimer = setTimeout(()=> { keyBuffer = ''; keyTimer = null; }, 700);
-
-        if(keyBuffer.length === 2){
-
-          const v = keyBuffer;
-
-          const cell = Array.from(document.querySelectorAll('.cell')).find(c=> c.dataset.value === v);
-
-          if(cell) { toggleCell(cell); }
-
-          keyBuffer = '';
-
-          if(keyTimer) { clearTimeout(keyTimer); keyTimer = null; }
-
-        }
-
-      }
-
-    });
-
-
-
-    // --- HÀM KHÔI PHỤC DỮ LIỆU KHI LOAD LẠI TRANG ---
-
-    async function loadData() {
-        try {
-            const doc = await docRef.get();
-            
-            if (doc.exists && doc.data().numbers) {
-                const arr = doc.data().numbers; // Lấy mảng các số từ Firestore
-                
-                // Áp dụng lại lựa chọn
-                arr.forEach(val => {
-                    selected.add(val);
-                    const cell = document.querySelector(`.cell[data-value="${val}"]`);
-                    if(cell) {
-                        cell.classList.add('selected');
-                        cell.setAttribute('aria-pressed', 'true');
-                    }
-                });
-                
-                // Cập nhật số lượng và ô kết quả (không cần lưu lại vào DB)
-                updateUI(false); 
-                console.log("Đã tải dữ liệu thành công từ Firebase!");
-            } else {
-                console.log("Không tìm thấy dữ liệu cũ trên Firebase, bắt đầu với trang trống.");
-            }
-        } catch (e) {
-            console.error("Lỗi khi tải dữ liệu từ Firebase:", e);
-            // Tùy chọn: đưa ra thông báo cho người dùng
-            alert("Không thể tải dữ liệu gần nhất từ Firebase. Kiểm tra kết nối!");
-        }
-        
-        // Logic Hoàn tác chỉ áp dụng cho phiên hiện tại (GIỮ NGUYÊN)
-        undoBtn.disabled = true;
-        undoBtn.removeAttribute('data-cleared');
-        localStorage.removeItem(UNDO_STORAGE_KEY);
-    }
-
-    // Chạy hàm load ngay khi mở web
-    loadData();
-
-
-
+      updateUI(false);
+    }
+    load();
   </script>
-
 </body>
-
 </html>
