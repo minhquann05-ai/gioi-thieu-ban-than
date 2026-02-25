@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>My App For Working</title>
+  <title>My App For Working - Fixed Sorted Groups</title>
 
   <style>
     :root{
@@ -16,104 +16,28 @@
       --selected-color:#fff;
       --separator-width: 20px;
     }
-
-    body{
-      margin:0;
-      background:var(--bg);
-      font-family:Inter, system-ui, sans-serif;
-    }
-
-    .wrap{
-      max-width:800px;
-      margin:28px auto;
-      padding:18px;
-      background:#fff;
-      border-radius:12px;
-      box-shadow:0 6px 24px rgba(10,10,20,0.06);
-    }
-
+    body{ margin:0; background:var(--bg); font-family:Inter, system-ui, sans-serif; }
+    .wrap{ max-width:800px; margin:28px auto; padding:18px; background:#fff; border-radius:12px; box-shadow:0 6px 24px rgba(10,10,20,0.06); }
     h1{ margin:0 0 10px; font-size:18px; }
-
-    /* GRID chuẩn với 11 cột: 5 + separator + 5 */
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr);
-      gap:var(--gap);
-      margin:14px 0;
-    }
-
-    .separator{
-      position:relative;
-      width:100%;
-      height:100%;
-    }
-    .separator::after{
-      content:"";
-      position:absolute;
-      top:0; bottom:0;
-      left:50%;
-      width:1px;
-      background:#e0e6ed;
-      transform:translateX(-50%);
-    }
-
-    .cell{
-      height:var(--cell-size);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      border-radius:8px;
-      background:var(--cell-bg);
-      cursor:pointer;
-      user-select:none;
-      font-weight:600;
-      border:1px solid rgba(16,24,40,0.06);
-      box-shadow:0 1px 0 rgba(16,24,40,0.03);
-      transition:0.12s;
-    }
-    .cell.selected{
-      background:var(--selected-bg);
-      color:var(--selected-color);
-      box-shadow:0 4px 12px rgba(11,118,239,0.18);
-    }
-
-    .controls{ display:flex; gap:10px; margin-top:12px; }
-    button.btn{
-      padding:10px 14px;
-      border-radius:8px;
-      border:0;
-      cursor:pointer;
-      font-weight:600;
-    }
+    .grid{ display:grid; grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr); gap:var(--gap); margin:14px 0; }
+    .separator{ position:relative; width:100%; height:100%; }
+    .separator::after{ content:""; position:absolute; top:0; bottom:0; left:50%; width:1px; background:#e0e6ed; transform:translateX(-50%); }
+    .cell{ height:var(--cell-size); display:flex; align-items:center; justify-content:center; border-radius:8px; background:var(--cell-bg); cursor:pointer; user-select:none; font-weight:600; border:1px solid rgba(16,24,40,0.06); box-shadow:0 1px 0 rgba(16,24,40,0.03); transition:0.12s; }
+    .cell.selected{ background:var(--selected-bg); color:var(--selected-color); box-shadow:0 4px 12px rgba(11,118,239,0.18); }
+    .controls{ display:flex; gap:10px; margin-top:12px; align-items: center; }
+    button.btn{ padding:10px 14px; border-radius:8px; border:0; cursor:pointer; font-weight:600; }
     .btn-primary{ background:var(--accent); color:#fff; }
     .btn-ghost{ background:#fff; border:1px solid rgba(16,24,40,0.1); }
-
-    button.btn:disabled{
-      opacity:.5;
-      cursor:not-allowed;
-    }
-
-    .info{ margin-left:auto; font-size:13px; color:#444; }
-
-    .result textarea{
-      width:100%; height:72px; padding:10px;
-      border-radius:8px;
-      border:1px solid rgba(16,24,40,0.06);
-      resize:vertical;
-    }
-
-    @media(max-width:600px){
-      :root{ --cell-size:40px; --gap:4px; --separator-width:12px; }
-      .wrap{ padding:12px; margin:10px; }
-    }
+    .info{ margin-left:auto; font-size:13px; color:#444; font-weight: bold; }
+    .result{ margin-top: 15px; }
+    .result textarea{ width:100%; height:180px; padding:12px; border-radius:8px; border:1px solid rgba(16,24,40,0.1); resize:vertical; font-family: 'Courier New', monospace; line-height: 1.5; box-sizing: border-box; background: #f9fafb; }
+    @media(max-width:600px){ :root{ --cell-size:40px; --gap:4px; --separator-width:12px; } .wrap{ padding:12px; margin:10px; } }
   </style>
 </head>
-
 <body>
   <div class="wrap">
     <h1>My App For Working</h1>
-    <div id="grid" class="grid" role="grid"></div>
-
+    <div id="grid" class="grid"></div>
     <div class="controls">
       <button id="doneBtn" class="btn btn-primary">Hoàn tất</button>
       <button id="copyBtn" class="btn btn-ghost">Sao chép</button>
@@ -121,164 +45,111 @@
       <button id="undoBtn" class="btn btn-ghost" disabled>Hoàn tác</button>
       <div class="info"><span id="count">0</span> đã chọn</div>
     </div>
-
-    <div class="result">
-      <textarea id="output" readonly></textarea>
-    </div>
+    <div class="result"><textarea id="output" readonly></textarea></div>
   </div>
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
   <script>
-    // Firebase config của bạn
     const firebaseConfig = {
       apiKey: "AIzaSyD-tbxT6acKrTgAqNxHyDZHW2gD06KX1CI",
       authDomain: "my-work-a159e.firebaseapp.com",
       projectId: "my-work-a159e",
       storageBucket: "my-work-a159e.firebasestorage.app",
       messagingSenderId: "69318636254",
-      appId: "1:69318636254:web:35a4a497ee50e6c718484f",
-      measurementId: "G-BJM8VEZCFR"
+      appId: "1:69318636254:web:35a4a497ee50e6c718484f"
     };
-
     const app = firebase.initializeApp(firebaseConfig);
     const db = app.firestore();
+    const docRef = db.collection("selected_numbers").doc('my_grid_data_v1');
+    
+    let selectedArr = []; // Lưu theo thứ tự người dùng nhấn
+    const limits = [9, 19, 29, 39, 49, 59, 69];
+    const labels = ["0x", "1x", "2x", "3x", "4x", "5x", "6x"];
 
-    const STORAGE_KEY = 'my_grid_data_v1';
-    const UNDO_STORAGE_KEY = 'my_grid_undo_v1';
-    const docRef = db.collection("selected_numbers").doc(STORAGE_KEY);
-
+    /* ------ TẠO GRID ------ */
     const grid = document.getElementById('grid');
-    const selected = new Set();
-    const output = document.getElementById('output');
-    const countEl = document.getElementById('count');
-    const undoBtn = document.getElementById('undoBtn');
-
-    const pad = n => n.toString().padStart(2,'0');
-    const getSorted = ()=> [...selected].sort((a,b)=>a-b);
-
-    /* ------ TẠO GRID 11 CỘT: 5 + SEP + 5 ------ */
     for(let row=0; row<10; row++){
       for(let col=0; col<11; col++){
-
-        // separator nằm ở cột số 5
-        if(col === 5){
-          const s = document.createElement('div');
-          s.className = "separator";
-          grid.appendChild(s);
-          continue;
-        }
-
+        if(col === 5){ grid.appendChild(Object.assign(document.createElement('div'), {className: "separator"})); continue; }
         const index = row * 10 + (col < 5 ? col : col - 1);
-        const val = pad(index);
-
+        const val = index.toString().padStart(2,'0');
         const btn = document.createElement('button');
-        btn.className="cell";
-        btn.dataset.value = val;
-        btn.textContent = val;
+        btn.className="cell"; btn.dataset.value = val; btn.textContent = val;
         btn.onclick = ()=> toggle(btn);
-
         grid.appendChild(btn);
       }
     }
 
-    /* ------ CHỌN / BỎ CHỌN ------ */
+    /* ------ LOGIC HIỂN THỊ: CHỐT NHÓM & SẮP XẾP ------ */
+    function updateUI(saveDb=true){
+      document.getElementById('count').textContent = selectedArr.length;
+      
+      let displayLines = [];
+      let currentSelection = [...selectedArr]; // Bản sao mảng thứ tự nhấn
+
+      // Duyệt qua từng mốc (9, 19, 29...)
+      let lastLimit = 0;
+      for (let i = 0; i < limits.length; i++) {
+        let countInThisStep = limits[i]; 
+        
+        // Lấy ra các số thuộc mốc này dựa trên thứ tự nhấn
+        let itemsForThisLabel = currentSelection.slice(0, countInThisStep);
+        
+        // SẮP XẾP các số trong mốc này từ nhỏ đến lớn
+        let sortedItems = [...itemsForThisLabel].sort((a,b) => a - b);
+        
+        displayLines.push(`${labels[i]}: ${sortedItems.join(', ')}`);
+      }
+
+      document.getElementById('output').value = displayLines.join('\n');
+      if(saveDb) saveToDB(selectedArr);
+    }
+
     function toggle(cell){
       const v = cell.dataset.value;
-      if(selected.has(v)){
-        selected.delete(v);
-        cell.classList.remove('selected');
-      } else {
-        selected.add(v);
-        cell.classList.add('selected');
-      }
-      undoBtn.disabled = true;
+      const idx = selectedArr.indexOf(v);
+      if(idx > -1) { selectedArr.splice(idx, 1); cell.classList.remove('selected'); }
+      else { selectedArr.push(v); cell.classList.add('selected'); }
+      document.getElementById('undoBtn').disabled = true;
       updateUI();
     }
 
-    function updateUI(saveDb=true){
-      const arr = getSorted();
-      output.value = arr.join(', ');
-      countEl.textContent = arr.length;
+    async function saveToDB(arr){ try { await docRef.set({numbers:arr}); } catch(e){} }
 
-      if(saveDb){
-        saveToDB(arr);
-      }
-    }
-
-    async function saveToDB(arr){
-      try{
-        await docRef.set({numbers:arr});
-      }catch(e){ console.log("Lỗi lưu:",e); }
-    }
-
-    /* ---------------- NÚT ---------------- */
-
-    document.getElementById('doneBtn').onclick = ()=>{
-      output.select();
+    document.getElementById('copyBtn').onclick = async () => {
+      try { await navigator.clipboard.writeText(document.getElementById('output').value); alert("Đã sao chép!"); }
+      catch { document.getElementById('output').select(); document.execCommand('copy'); }
     };
 
-    document.getElementById('copyBtn').onclick = async ()=>{
-      try{
-        await navigator.clipboard.writeText(output.value);
-      }catch{
-        output.select();
-        document.execCommand('copy');
-      }
-    };
-
-    document.getElementById('clearBtn').onclick = ()=>{
-      const old = getSorted();
-      localStorage.setItem(UNDO_STORAGE_KEY, JSON.stringify(old));
-      undoBtn.disabled = false;
-
-      selected.clear();
-      document.querySelectorAll('.cell.selected')
-              .forEach(x=>x.classList.remove('selected'));
-
+    document.getElementById('clearBtn').onclick = () => {
+      localStorage.setItem('undo_grid', JSON.stringify([...selectedArr]));
+      document.getElementById('undoBtn').disabled = false;
+      selectedArr = [];
+      document.querySelectorAll('.cell.selected').forEach(x => x.classList.remove('selected'));
       updateUI();
     };
 
-    undoBtn.onclick = ()=>{
-      const saved = JSON.parse(localStorage.getItem(UNDO_STORAGE_KEY));
-      if(!saved) return;
-
-      selected.clear();
-      document.querySelectorAll('.cell.selected')
-              .forEach(x=>x.classList.remove('selected'));
-
-      saved.forEach(v=>{
-        selected.add(v);
-        const cell = document.querySelector(`.cell[data-value="${v}"]`);
-        if(cell){ cell.classList.add('selected'); }
-      });
-
+    document.getElementById('undoBtn').onclick = () => {
+      selectedArr = JSON.parse(localStorage.getItem('undo_grid') || "[]");
+      document.querySelectorAll('.cell.selected').forEach(x => x.classList.remove('selected'));
+      selectedArr.forEach(v => document.querySelector(`.cell[data-value="${v}"]`)?.classList.add('selected'));
       updateUI();
-      undoBtn.disabled = true;
-      localStorage.removeItem(UNDO_STORAGE_KEY);
+      document.getElementById('undoBtn').disabled = true;
     };
 
-    /* ---------- LOAD FIREBASE KHI MỞ WEB ---------- */
     async function load(){
-      try{
+      try {
         const doc = await docRef.get();
         if(doc.exists){
-          const arr = doc.data().numbers;
-          arr.forEach(v=>{
-            selected.add(v);
-            const cell = document.querySelector(`.cell[data-value="${v}"]`);
-            if(cell) cell.classList.add('selected');
-          });
+          selectedArr = doc.data().numbers || [];
+          selectedArr.forEach(v => document.querySelector(`.cell[data-value="${v}"]`)?.classList.add('selected'));
         }
-      }catch(e){}
-
+      } catch(e){}
       updateUI(false);
     }
     load();
   </script>
 </body>
 </html>
-
-
