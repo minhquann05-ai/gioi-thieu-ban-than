@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>My App For Working - Fixed Sorted Groups</title>
+  <title>My App For Working - Fixed Sorted Groups 0x-8x</title>
 
   <style>
     :root{
@@ -30,7 +30,18 @@
     .btn-ghost{ background:#fff; border:1px solid rgba(16,24,40,0.1); }
     .info{ margin-left:auto; font-size:13px; color:#444; font-weight: bold; }
     .result{ margin-top: 15px; }
-    .result textarea{ width:100%; height:180px; padding:12px; border-radius:8px; border:1px solid rgba(16,24,40,0.1); resize:vertical; font-family: 'Courier New', monospace; line-height: 1.5; box-sizing: border-box; background: #f9fafb; }
+    .result textarea{ 
+      width:100%; 
+      height:320px; /* Tăng chiều cao để hiện đủ từ 0x đến 8x kèm dòng trống */
+      padding:12px; 
+      border-radius:8px; 
+      border:1px solid rgba(16,24,40,0.1); 
+      resize:vertical; 
+      font-family: 'Courier New', monospace; 
+      line-height: 1.6; 
+      box-sizing: border-box; 
+      background: #f9fafb; 
+    }
     @media(max-width:600px){ :root{ --cell-size:40px; --gap:4px; --separator-width:12px; } .wrap{ padding:12px; margin:10px; } }
   </style>
 </head>
@@ -64,9 +75,10 @@
     const db = app.firestore();
     const docRef = db.collection("selected_numbers").doc('my_grid_data_v1');
     
-    let selectedArr = []; // Lưu theo thứ tự người dùng nhấn
-    const limits = [9, 19, 29, 39, 49, 59, 69];
-    const labels = ["0x", "1x", "2x", "3x", "4x", "5x", "6x"];
+    let selectedArr = []; 
+    // Thêm mốc 79 và 89 vào danh sách limits
+    const limits = [9, 19, 29, 39, 49, 59, 69, 79, 89];
+    const labels = ["0x", "1x", "2x", "3x", "4x", "5x", "6x", "7x", "8x"];
 
     /* ------ TẠO GRID ------ */
     const grid = document.getElementById('grid');
@@ -82,28 +94,26 @@
       }
     }
 
-    /* ------ LOGIC HIỂN THỊ: CHỐT NHÓM & SẮP XẾP ------ */
+    /* ------ LOGIC: CHỐT NHÓM, SẮP XẾP & CÁCH DÒNG ------ */
     function updateUI(saveDb=true){
       document.getElementById('count').textContent = selectedArr.length;
       
       let displayLines = [];
-      let currentSelection = [...selectedArr]; // Bản sao mảng thứ tự nhấn
+      let currentSelection = [...selectedArr]; 
 
-      // Duyệt qua từng mốc (9, 19, 29...)
-      let lastLimit = 0;
       for (let i = 0; i < limits.length; i++) {
         let countInThisStep = limits[i]; 
-        
-        // Lấy ra các số thuộc mốc này dựa trên thứ tự nhấn
         let itemsForThisLabel = currentSelection.slice(0, countInThisStep);
         
-        // SẮP XẾP các số trong mốc này từ nhỏ đến lớn
+        // Sắp xếp các số trong phạm vi của mốc này (Nhỏ đến lớn)
         let sortedItems = [...itemsForThisLabel].sort((a,b) => a - b);
         
         displayLines.push(`${labels[i]}: ${sortedItems.join(', ')}`);
       }
 
-      document.getElementById('output').value = displayLines.join('\n');
+      // Nối các dòng lại với nhau bằng 2 dấu Enter (\n\n)
+      document.getElementById('output').value = displayLines.join('\n\n');
+      
       if(saveDb) saveToDB(selectedArr);
     }
 
@@ -119,7 +129,10 @@
     async function saveToDB(arr){ try { await docRef.set({numbers:arr}); } catch(e){} }
 
     document.getElementById('copyBtn').onclick = async () => {
-      try { await navigator.clipboard.writeText(document.getElementById('output').value); alert("Đã sao chép!"); }
+      try { 
+        await navigator.clipboard.writeText(document.getElementById('output').value); 
+        alert("Đã sao chép 0x-8x!"); 
+      }
       catch { document.getElementById('output').select(); document.execCommand('copy'); }
     };
 
