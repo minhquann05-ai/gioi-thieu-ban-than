@@ -99,16 +99,15 @@
       document.getElementById('count').textContent = selectedArr.length;
       
       let displayLines = [];
-      let currentSelection = [...selectedArr]; 
+      let currentSelection = [...selectedArr]; // Đây là mảng chứa các số theo thứ tự bạn đã click
 
       for (let i = 0; i < limits.length; i++) {
         let countInThisStep = limits[i]; 
+        // Lấy các phần tử trong phạm vi mốc hiện tại
         let itemsForThisLabel = currentSelection.slice(0, countInThisStep);
         
-        // Sắp xếp các số trong phạm vi của mốc này (Nhỏ đến lớn)
-        let sortedItems = [...itemsForThisLabel].sort((a,b) => a - b);
-        
-        displayLines.push(`${labels[i]}: ${sortedItems.join(', ')}`);
+        // ĐÃ BỎ DÒNG .sort() - Giữ nguyên thứ tự nhập vào
+        displayLines.push(`${labels[i]}: ${itemsForThisLabel.join(', ')}`);
       }
 
       // Nối các dòng lại với nhau bằng 2 dấu Enter (\n\n)
@@ -166,3 +165,4 @@
   </script>
 </body>
 </html>
+
