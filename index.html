@@ -29,19 +29,24 @@
     .btn-primary{ background:var(--accent); color:#fff; }
     .btn-ghost{ background:#fff; border:1px solid rgba(16,24,40,0.1); }
     .info{ margin-left:auto; font-size:13px; color:#444; font-weight: bold; }
-    .result{ margin-top: 15px; }
-    .result textarea{ 
-      width:100%; 
-      height:320px; /* Tăng chiều cao để hiện đủ từ 0x đến 8x kèm dòng trống */
-      padding:12px; 
-      border-radius:8px; 
-      border:1px solid rgba(16,24,40,0.1); 
-      resize:vertical; 
-      font-family: 'Courier New', monospace; 
-      line-height: 1.6; 
-      box-sizing: border-box; 
-      background: #f9fafb; 
-    }
+    .result { 
+  margin-top: 100vh; /* Đẩy xuống dưới đúng bằng chiều cao 1 màn hình */
+  padding-bottom: 50px; /* Thêm một chút khoảng trống dưới cùng để dễ nhìn */
+}
+
+.result textarea {  
+  width: 100%;  
+  height: 400px; /* Có thể tăng thêm chiều cao nếu muốn */
+  padding: 12px;  
+  border-radius: 8px;  
+  border: 1px solid rgba(16,24,40,0.1);  
+  resize: vertical;  
+  font-family: 'Courier New', monospace;  
+  line-height: 1.6;  
+  box-sizing: border-box;  
+  background: #f9fafb;  
+  display: block; /* Đảm bảo textarea hiển thị tốt */
+}
     @media(max-width:600px){ :root{ --cell-size:40px; --gap:4px; --separator-width:12px; } .wrap{ padding:12px; margin:10px; } }
   </style>
 </head>
@@ -165,4 +170,5 @@
   </script>
 </body>
 </html>
+
 
