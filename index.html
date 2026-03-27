@@ -3,65 +3,69 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>My App For Working - Fixed Sorted Groups 0x-8x</title>
+  <title>My App - Destiny 69 Mode (>=6)</title>
 
   <style>
     :root{
-      --gap:8px;
-      --cell-size:56px;
-      --accent:#0b76ef;
-      --bg:#f6f8fb;
-      --cell-bg:#ffffff;
-      --selected-bg:var(--accent);
-      --selected-color:#fff;
+      --gap:8px; --cell-size:56px; --accent:#0b76ef; --bg:#f6f8fb;
+      --cell-bg:#ffffff; --selected-bg:var(--accent); --selected-color:#fff;
       --separator-width: 20px;
     }
     body{ margin:0; background:var(--bg); font-family:Inter, system-ui, sans-serif; }
     .wrap{ max-width:800px; margin:28px auto; padding:18px; background:#fff; border-radius:12px; box-shadow:0 6px 24px rgba(10,10,20,0.06); }
-    h1{ margin:0 0 10px; font-size:18px; }
+    h1{ margin:0 0 10px; font-size:18px; color: #1e293b; }
     .grid{ display:grid; grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr); gap:var(--gap); margin:14px 0; }
     .separator{ position:relative; width:100%; height:100%; }
     .separator::after{ content:""; position:absolute; top:0; bottom:0; left:50%; width:1px; background:#e0e6ed; transform:translateX(-50%); }
-    .cell{ height:var(--cell-size); display:flex; align-items:center; justify-content:center; border-radius:8px; background:var(--cell-bg); cursor:pointer; user-select:none; font-weight:600; border:1px solid rgba(16,24,40,0.06); box-shadow:0 1px 0 rgba(16,24,40,0.03); transition:0.12s; }
-    .cell.selected{ background:var(--selected-bg); color:var(--selected-color); box-shadow:0 4px 12px rgba(11,118,239,0.18); }
-    .controls{ display:flex; gap:10px; margin-top:12px; align-items: center; }
-    button.btn{ padding:10px 14px; border-radius:8px; border:0; cursor:pointer; font-weight:600; }
-    .btn-primary{ background:var(--accent); color:#fff; }
-    .btn-ghost{ background:#fff; border:1px solid rgba(16,24,40,0.1); }
-    .info{ margin-left:auto; font-size:13px; color:#444; font-weight: bold; }
-    .result { 
-  margin-top: 100vh; /* Đẩy xuống dưới đúng bằng chiều cao 1 màn hình */
-  padding-bottom: 50px; /* Thêm một chút khoảng trống dưới cùng để dễ nhìn */
-}
+    .cell{ height:var(--cell-size); display:flex; align-items:center; justify-content:center; border-radius:8px; background:var(--cell-bg); cursor:pointer; user-select:none; font-weight:600; border:1px solid rgba(16,24,40,0.06); transition:0.01s; outline: none; }
+    .cell.selected{ background:var(--selected-bg); color:var(--selected-color); }
+    
+    .controls{ display:flex; gap:10px; margin-top:12px; align-items: center; flex-wrap: wrap; }
+    .input-group { display: flex; align-items: center; gap: 8px; background: #eff6ff; padding: 8px 15px; border-radius: 10px; border: 1px solid #bfdbfe; }
+    .input-group label { font-size: 13px; font-weight: 800; color: #1e40af; text-transform: uppercase; }
+    .input-group input { width: 60px; border: 1.5px solid #2563eb; padding: 5px; border-radius: 6px; font-weight: 900; text-align: center; color: #1e40af; outline: none; }
+    
+    button.btn{ padding:12px 18px; border-radius:10px; border:0; cursor:pointer; font-weight:700; transition: 0.2s; }
+    .btn-random{ background: #2563eb; color: white; box-shadow: 0 4px 0 #1e3a8a; }
+    .btn-random.running { background: #64748b; box-shadow: 0 4px 0 #334155; }
+    .btn-ghost{ background:#fff; border:1px solid rgba(16,24,40,0.1); color: #444; }
+    
+    .status-area { margin-top: 20px; padding: 15px; border-radius: 12px; background: #0f172a; color: #f8fafc; border-left: 5px solid #3b82f6; }
+    .status-info { font-size: 15px; font-family: 'Courier New', monospace; margin-bottom: 5px; }
+    .highlight { color: #60a5fa; font-weight: bold; }
+    .valid-color { color: #4ade80; font-weight: bold; }
 
-.result textarea {  
-  width: 100%;  
-  height: 400px; /* Có thể tăng thêm chiều cao nếu muốn */
-  padding: 12px;  
-  border-radius: 8px;  
-  border: 1px solid rgba(16,24,40,0.1);  
-  resize: vertical;  
-  font-family: 'Courier New', monospace;  
-  line-height: 1.6;  
-  box-sizing: border-box;  
-  background: #f9fafb;  
-  display: block; /* Đảm bảo textarea hiển thị tốt */
-}
-    @media(max-width:600px){ :root{ --cell-size:40px; --gap:4px; --separator-width:12px; } .wrap{ padding:12px; margin:10px; } }
+    .result { margin-top: 20px; padding-bottom: 50px; }
+    .result textarea { width: 100%; height: 400px; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-family: monospace; background: #fafafa; font-size: 13px; line-height: 1.4; }
+    
+    @media(max-width:600px){ :root{ --cell-size:36px; } .wrap{ margin:5px; padding: 10px; } .controls { flex-direction: column; } }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>My App For Working</h1>
+    <h1>My App - Destiny Mode (69 Số | Đ/Đ &ge; 6)</h1>
     <div id="grid" class="grid"></div>
+    
     <div class="controls">
-      <button id="doneBtn" class="btn btn-primary">Hoàn tất</button>
+      <div class="input-group">
+        <label>Lượt Định Mệnh:</label>
+        <input type="number" id="destinyTurn" value="15" min="1">
+      </div>
+      <button id="randomBtn" class="btn btn-random">Bắt đầu Quét 69 Số</button>
       <button id="copyBtn" class="btn btn-ghost">Sao chép</button>
       <button id="clearBtn" class="btn btn-ghost">Xóa chọn</button>
       <button id="undoBtn" class="btn btn-ghost" disabled>Hoàn tác</button>
-      <div class="info"><span id="count">0</span> đã chọn</div>
     </div>
-    <div class="result"><textarea id="output" readonly></textarea></div>
+    
+    <div class="status-area">
+      <div id="status" class="status-info">Hệ thống sẵn sàng...</div>
+      <div id="subStatus" style="font-size: 12px; color: #94a3b8;">Điều kiện: 69 số, tất cả đầu/đuôi xuất hiện &ge; 6 lần.</div>
+    </div>
+
+    <div class="result">
+      <div style="font-weight: bold; margin-bottom: 5px;">Đã chọn: <span id="count">0</span> số</div>
+      <textarea id="output" readonly></textarea>
+    </div>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -76,99 +80,160 @@
       messagingSenderId: "69318636254",
       appId: "1:69318636254:web:35a4a497ee50e6c718484f"
     };
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = app.firestore();
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
     const docRef = db.collection("selected_numbers").doc('my_grid_data_v1');
     
     let selectedArr = []; 
-    // Thêm mốc 79 và 89 vào danh sách limits
+    let isRunning = false;
+    let timer = null;
     const limits = [9, 19, 29, 39, 49, 59, 69, 79, 89];
     const labels = ["0x", "1x", "2x", "3x", "4x", "5x", "6x", "7x", "8x"];
 
-    /* ------ TẠO GRID ------ */
+    /* GRID RENDER */
     const grid = document.getElementById('grid');
     for(let row=0; row<10; row++){
       for(let col=0; col<11; col++){
-        if(col === 5){ grid.appendChild(Object.assign(document.createElement('div'), {className: "separator"})); continue; }
+        if(col === 5){ grid.appendChild(Object.assign(document.createElement('div'), {className:"separator"})); continue; }
         const index = row * 10 + (col < 5 ? col : col - 1);
         const val = index.toString().padStart(2,'0');
         const btn = document.createElement('button');
         btn.className="cell"; btn.dataset.value = val; btn.textContent = val;
-        btn.onclick = ()=> toggle(btn);
+        btn.onclick = ()=> { if(!isRunning) toggle(btn); };
         grid.appendChild(btn);
       }
     }
 
-    /* ------ LOGIC: CHỐT NHÓM, SẮP XẾP & CÁCH DÒNG ------ */
     function updateUI(saveDb=true){
       document.getElementById('count').textContent = selectedArr.length;
-      
       let displayLines = [];
-      let currentSelection = [...selectedArr]; // Đây là mảng chứa các số theo thứ tự bạn đã click
-
+      // Sắp xếp bộ số để dễ nhìn trong textarea
+      let sortedCurrent = [...selectedArr].sort();
       for (let i = 0; i < limits.length; i++) {
-        let countInThisStep = limits[i]; 
-        // Lấy các phần tử trong phạm vi mốc hiện tại
-        let itemsForThisLabel = currentSelection.slice(0, countInThisStep);
-        
-        // ĐÃ BỎ DÒNG .sort() - Giữ nguyên thứ tự nhập vào
+        let itemsForThisLabel = sortedCurrent.slice(0, limits[i]);
         displayLines.push(`${labels[i]}: ${itemsForThisLabel.join(', ')}`);
       }
-
-      // Nối các dòng lại với nhau bằng 2 dấu Enter (\n\n)
       document.getElementById('output').value = displayLines.join('\n\n');
-      
+      document.querySelectorAll('.cell').forEach(cell => {
+        cell.classList.toggle('selected', selectedArr.includes(cell.dataset.value));
+      });
       if(saveDb) saveToDB(selectedArr);
     }
 
     function toggle(cell){
       const v = cell.dataset.value;
       const idx = selectedArr.indexOf(v);
-      if(idx > -1) { selectedArr.splice(idx, 1); cell.classList.remove('selected'); }
-      else { selectedArr.push(v); cell.classList.add('selected'); }
-      document.getElementById('undoBtn').disabled = true;
+      if(idx > -1) selectedArr.splice(idx, 1); else selectedArr.push(v);
       updateUI();
     }
 
-    async function saveToDB(arr){ try { await docRef.set({numbers:arr}); } catch(e){} }
-
-    document.getElementById('copyBtn').onclick = async () => {
-      try { 
-        await navigator.clipboard.writeText(document.getElementById('output').value); 
-        alert("Đã sao chép 0x-8x!"); 
+    /* LOGIC: DESTINY TURN MODE (69 SỐ | >= 6) */
+    function checkValid(batch) {
+      let hCount = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0};
+      let tCount = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0};
+      
+      for (let num of batch) {
+        hCount[num[0]]++;
+        tCount[num[1]]++;
       }
-      catch { document.getElementById('output').select(); document.execCommand('copy'); }
+      
+      // Kiểm tra tất cả các đầu/đuôi (0-9)
+      for (let i = 0; i <= 9; i++) {
+        if (hCount[i] < 6 || tCount[i] < 6) return false;
+      }
+      return true;
+    }
+
+    document.getElementById('randomBtn').onclick = function() {
+      if (isRunning) { stopProcess(); return; }
+      startProcess();
     };
 
+    function startProcess() {
+      const targetTurn = parseInt(document.getElementById('destinyTurn').value) || 1;
+      isRunning = true;
+      let currentTurn = 0;
+      let sessionCount = 0;
+      
+      const btn = document.getElementById('randomBtn');
+      btn.textContent = "STOP QUÉT";
+      btn.classList.add('running');
+
+      timer = setInterval(() => {
+        currentTurn++;
+        
+        // 1. Tạo 69 số ngẫu nhiên
+        let pool = Array.from({length: 100}, (_, i) => i.toString().padStart(2, '0'));
+        for (let i = 99; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [pool[i], pool[j]] = [pool[j], pool[i]];
+        }
+        let testBatch = pool.slice(0, 69); // Chọn 69 số
+        selectedArr = testBatch;
+        updateUI(false);
+
+        const isValid = checkValid(testBatch);
+
+        document.getElementById('status').innerHTML = `Đang ở lượt: <span class="highlight">${currentTurn}</span> / ${targetTurn}`;
+
+        // 2. LOGIC ĐỊNH MỆNH
+        if (currentTurn < targetTurn) {
+          if (isValid) {
+            sessionCount++;
+            currentTurn = 0; 
+            document.getElementById('subStatus').textContent = `Reset chu kỳ do Hợp Lệ sớm ở lượt ${currentTurn} (Lần ${sessionCount})`;
+          }
+        } 
+        else if (currentTurn === targetTurn) {
+          if (isValid) {
+            stopProcess(true, currentTurn, sessionCount);
+          } else {
+            sessionCount++;
+            currentTurn = 0;
+            document.getElementById('subStatus').textContent = `Lượt ${targetTurn} KHÔNG hợp lệ. Đang làm lại chu kỳ thứ ${sessionCount+1}...`;
+          }
+        }
+      }, 20); // Tốc độ quét rất nhanh
+    }
+
+    function stopProcess(success = false, turn = 0, sessions = 0) {
+      clearInterval(timer);
+      isRunning = false;
+      const btn = document.getElementById('randomBtn');
+      btn.textContent = "Bắt đầu Quét 69 Số";
+      btn.classList.remove('running');
+      
+      if (success) {
+        document.getElementById('status').innerHTML = `✅ <span class="valid-color">THÀNH CÔNG RỰC RỠ!</span>`;
+        document.getElementById('subStatus').textContent = `Tìm thấy bộ 69 số (Đ/Đ >= 6) tại lượt thứ ${turn} sau ${sessions} lần reset.`;
+        updateUI(true);
+        alert("Đã khớp định mệnh! Đã tìm được bộ 69 số hợp lệ tại lượt thứ " + turn);
+      } else {
+        document.getElementById('status').textContent = "Đã dừng thủ công.";
+      }
+    }
+
+    /* UTILS */
+    async function saveToDB(arr){ try { await docRef.set({numbers:arr}); } catch(e){} }
+    document.getElementById('copyBtn').onclick = () => {
+      navigator.clipboard.writeText(document.getElementById('output').value);
+      alert("Đã sao chép 69 số!");
+    };
     document.getElementById('clearBtn').onclick = () => {
-      localStorage.setItem('undo_grid', JSON.stringify([...selectedArr]));
-      document.getElementById('undoBtn').disabled = false;
-      selectedArr = [];
-      document.querySelectorAll('.cell.selected').forEach(x => x.classList.remove('selected'));
-      updateUI();
+      selectedArr = []; updateUI();
+      document.getElementById('status').textContent = "Sẵn sàng...";
     };
-
     document.getElementById('undoBtn').onclick = () => {
       selectedArr = JSON.parse(localStorage.getItem('undo_grid') || "[]");
-      document.querySelectorAll('.cell.selected').forEach(x => x.classList.remove('selected'));
-      selectedArr.forEach(v => document.querySelector(`.cell[data-value="${v}"]`)?.classList.add('selected'));
-      updateUI();
-      document.getElementById('undoBtn').disabled = true;
+      updateUI(); document.getElementById('undoBtn').disabled = true;
     };
-
     async function load(){
       try {
         const doc = await docRef.get();
-        if(doc.exists){
-          selectedArr = doc.data().numbers || [];
-          selectedArr.forEach(v => document.querySelector(`.cell[data-value="${v}"]`)?.classList.add('selected'));
-        }
+        if(doc.exists) { selectedArr = doc.data().numbers || []; updateUI(false); }
       } catch(e){}
-      updateUI(false);
     }
     load();
   </script>
 </body>
 </html>
-
-
