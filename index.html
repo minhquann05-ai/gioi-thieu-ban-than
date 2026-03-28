@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>My App - Destiny 69 Mode (>=6)</title>
+  <title>My App - Destiny 68 Mode (>=6 & Phân loại)</title>
 
   <style>
     :root{
@@ -12,38 +12,40 @@
       --separator-width: 20px;
     }
     body{ margin:0; background:var(--bg); font-family:Inter, system-ui, sans-serif; }
-    .wrap{ max-width:800px; margin:28px auto; padding:18px; background:#fff; border-radius:12px; box-shadow:0 6px 24px rgba(10,10,20,0.06); }
-    h1{ margin:0 0 10px; font-size:18px; color: #1e293b; }
+    .wrap{ max-width:800px; margin:20px auto; padding:18px; background:#fff; border-radius:12px; box-shadow:0 6px 24px rgba(10,10,20,0.06); }
+    h1{ margin:0 0 10px; font-size:18px; color: #1e293b; text-align: center; }
     .grid{ display:grid; grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr); gap:var(--gap); margin:14px 0; }
     .separator{ position:relative; width:100%; height:100%; }
     .separator::after{ content:""; position:absolute; top:0; bottom:0; left:50%; width:1px; background:#e0e6ed; transform:translateX(-50%); }
     .cell{ height:var(--cell-size); display:flex; align-items:center; justify-content:center; border-radius:8px; background:var(--cell-bg); cursor:pointer; user-select:none; font-weight:600; border:1px solid rgba(16,24,40,0.06); transition:0.01s; outline: none; }
     .cell.selected{ background:var(--selected-bg); color:var(--selected-color); }
     
-    .controls{ display:flex; gap:10px; margin-top:12px; align-items: center; flex-wrap: wrap; }
-    .input-group { display: flex; align-items: center; gap: 8px; background: #eff6ff; padding: 8px 15px; border-radius: 10px; border: 1px solid #bfdbfe; }
-    .input-group label { font-size: 13px; font-weight: 800; color: #1e40af; text-transform: uppercase; }
-    .input-group input { width: 60px; border: 1.5px solid #2563eb; padding: 5px; border-radius: 6px; font-weight: 900; text-align: center; color: #1e40af; outline: none; }
+    .controls{ display:flex; gap:10px; margin-top:12px; align-items: center; flex-wrap: wrap; justify-content: center; }
+    .input-group { display: flex; align-items: center; gap: 8px; background: #f0fdf4; padding: 8px 15px; border-radius: 10px; border: 1px solid #bbf7d0; }
+    .input-group label { font-size: 13px; font-weight: 800; color: #166534; }
+    .input-group input { width: 60px; border: 1.5px solid #16a34a; padding: 5px; border-radius: 6px; font-weight: 900; text-align: center; color: #166534; outline: none; }
     
     button.btn{ padding:12px 18px; border-radius:10px; border:0; cursor:pointer; font-weight:700; transition: 0.2s; }
-    .btn-random{ background: #2563eb; color: white; box-shadow: 0 4px 0 #1e3a8a; }
+    .btn-random{ background: #16a34a; color: white; box-shadow: 0 4px 0 #14532d; }
     .btn-random.running { background: #64748b; box-shadow: 0 4px 0 #334155; }
     .btn-ghost{ background:#fff; border:1px solid rgba(16,24,40,0.1); color: #444; }
     
-    .status-area { margin-top: 20px; padding: 15px; border-radius: 12px; background: #0f172a; color: #f8fafc; border-left: 5px solid #3b82f6; }
+    .status-area { margin-top: 20px; padding: 15px; border-radius: 12px; background: #0f172a; color: #f8fafc; border-left: 5px solid #22c55e; }
     .status-info { font-size: 15px; font-family: 'Courier New', monospace; margin-bottom: 5px; }
-    .highlight { color: #60a5fa; font-weight: bold; }
-    .valid-color { color: #4ade80; font-weight: bold; }
-
-    .result { margin-top: 20px; padding-bottom: 50px; }
-    .result textarea { width: 100%; height: 400px; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-family: monospace; background: #fafafa; font-size: 13px; line-height: 1.4; }
     
-    @media(max-width:600px){ :root{ --cell-size:36px; } .wrap{ margin:5px; padding: 10px; } .controls { flex-direction: column; } }
+    .stats-panel { display: flex; gap: 15px; margin-top: 15px; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; font-weight: bold; }
+    .stat-item { flex: 1; text-align: center; color: #475569; }
+    .stat-val { color: #0b76ef; font-size: 16px; }
+
+    .result { margin-top: 10px; padding-bottom: 50px; }
+    .result textarea { width: 100%; height: 380px; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-family: monospace; background: #fafafa; font-size: 13px; line-height: 1.4; }
+    
+    @media(max-width:600px){ :root{ --cell-size:36px; } .wrap{ margin:5px; padding: 10px; } .controls { flex-direction: column; } .stats-panel { flex-direction: column; gap: 5px; } }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>My App - NMADDPXCCCTHN</h1>
+    <h1>My App - NMADDPXPHMMCC</h1>
     <div id="grid" class="grid"></div>
     
     <div class="controls">
@@ -51,19 +53,24 @@
         <label>Lượt Định Mệnh:</label>
         <input type="number" id="destinyTurn" value="15" min="1">
       </div>
-      <button id="randomBtn" class="btn btn-random">Bắt đầu Quét 69 Số</button>
+      <button id="randomBtn" class="btn btn-random"><3</button>
       <button id="copyBtn" class="btn btn-ghost">Sao chép</button>
       <button id="clearBtn" class="btn btn-ghost">Xóa chọn</button>
       <button id="undoBtn" class="btn btn-ghost" disabled>Hoàn tác</button>
     </div>
     
     <div class="status-area">
-      <div id="status" class="status-info">Hệ thống sẵn sàng...</div>
-      <div id="subStatus" style="font-size: 12px; color: #94a3b8;">Điều kiện: 69 số, tất cả đầu/đuôi xuất hiện &ge; 6 lần.</div>
+      <div id="status" class="status-info">Chờ lệnh lọc số 68...</div>
+      <div id="subStatus" style="font-size: 12px; color: #94a3b8;">Điều kiện: 68 số, Đầu/Đuôi &ge; 6 lần.</div>
+    </div>
+
+    <div class="stats-panel">
+      <div class="stat-item">Tổng chọn: <span id="count" class="stat-val">0</span></div>
+      <div class="stat-item">Nhỏ (&lt; 50): <span id="lowCount" class="stat-val">0</span></div>
+      <div class="stat-item">Lớn (&ge; 50): <span id="highCount" class="stat-val">0</span></div>
     </div>
 
     <div class="result">
-      <div style="font-weight: bold; margin-bottom: 5px;">Đã chọn: <span id="count">0</span> số</div>
       <textarea id="output" readonly></textarea>
     </div>
   </div>
@@ -106,14 +113,23 @@
 
     function updateUI(saveDb=true){
       document.getElementById('count').textContent = selectedArr.length;
+      
+      // Tính toán Nhỏ (<50) và Lớn (>=50)
+      let low = 0, high = 0;
+      selectedArr.forEach(num => {
+        if(parseInt(num) < 50) low++; else high++;
+      });
+      document.getElementById('lowCount').textContent = low;
+      document.getElementById('highCount').textContent = high;
+
       let displayLines = [];
-      // Sắp xếp bộ số để dễ nhìn trong textarea
       let sortedCurrent = [...selectedArr].sort();
       for (let i = 0; i < limits.length; i++) {
         let itemsForThisLabel = sortedCurrent.slice(0, limits[i]);
         displayLines.push(`${labels[i]}: ${itemsForThisLabel.join(', ')}`);
       }
       document.getElementById('output').value = displayLines.join('\n\n');
+      
       document.querySelectorAll('.cell').forEach(cell => {
         cell.classList.toggle('selected', selectedArr.includes(cell.dataset.value));
       });
@@ -127,17 +143,14 @@
       updateUI();
     }
 
-    /* LOGIC: DESTINY TURN MODE (69 SỐ | >= 6) */
+    /* LOGIC: DESTINY TURN MODE (68 SỐ | >= 6) */
     function checkValid(batch) {
-      let hCount = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0};
-      let tCount = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0};
-      
+      let hCount = {0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
+      let tCount = {0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
       for (let num of batch) {
         hCount[num[0]]++;
         tCount[num[1]]++;
       }
-      
-      // Kiểm tra tất cả các đầu/đuôi (0-9)
       for (let i = 0; i <= 9; i++) {
         if (hCount[i] < 6 || tCount[i] < 6) return false;
       }
@@ -155,33 +168,32 @@
       let currentTurn = 0;
       let sessionCount = 0;
       
-      const btn = document.getElementById('randomBtn');
-      btn.textContent = "STOP QUÉT";
-      btn.classList.add('running');
+      document.getElementById('randomBtn').textContent = "DỪNG LẠI";
+      document.getElementById('randomBtn').classList.add('running');
+      localStorage.setItem('undo_grid', JSON.stringify([...selectedArr]));
+      document.getElementById('undoBtn').disabled = false;
 
       timer = setInterval(() => {
         currentTurn++;
         
-        // 1. Tạo 69 số ngẫu nhiên
         let pool = Array.from({length: 100}, (_, i) => i.toString().padStart(2, '0'));
         for (let i = 99; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [pool[i], pool[j]] = [pool[j], pool[i]];
         }
-        let testBatch = pool.slice(0, 69); // Chọn 69 số
+        
+        let testBatch = pool.slice(0, 68); // Lấy đúng 68 số
         selectedArr = testBatch;
         updateUI(false);
 
         const isValid = checkValid(testBatch);
+        document.getElementById('status').innerHTML = `Đang quét lượt: <span style="color:#60a5fa">${currentTurn}</span> / ${targetTurn}`;
 
-        document.getElementById('status').innerHTML = `Đang ở lượt: <span class="highlight">${currentTurn}</span> / ${targetTurn}`;
-
-        // 2. LOGIC ĐỊNH MỆNH
         if (currentTurn < targetTurn) {
           if (isValid) {
             sessionCount++;
             currentTurn = 0; 
-            document.getElementById('subStatus').textContent = `Reset chu kỳ do Hợp Lệ sớm ở lượt ${currentTurn} (Lần ${sessionCount})`;
+            document.getElementById('subStatus').textContent = `Reset chu kỳ do Hợp Lệ sớm (Lần ${sessionCount})`;
           }
         } 
         else if (currentTurn === targetTurn) {
@@ -190,26 +202,21 @@
           } else {
             sessionCount++;
             currentTurn = 0;
-            document.getElementById('subStatus').textContent = `Lượt ${targetTurn} KHÔNG hợp lệ. Đang làm lại chu kỳ thứ ${sessionCount+1}...`;
+            document.getElementById('subStatus').textContent = `Lượt ${targetTurn} không đạt. Reset chu kỳ thứ ${sessionCount+1}...`;
           }
         }
-      }, 20); // Tốc độ quét rất nhanh
+      }, 25); 
     }
 
     function stopProcess(success = false, turn = 0, sessions = 0) {
       clearInterval(timer);
       isRunning = false;
-      const btn = document.getElementById('randomBtn');
-      btn.textContent = "Bắt đầu Quét 69 Số";
-      btn.classList.remove('running');
-      
+      document.getElementById('randomBtn').textContent = "Kích Hoạt 68 Số";
+      document.getElementById('randomBtn').classList.remove('running');
       if (success) {
-        document.getElementById('status').innerHTML = `✅ <span class="valid-color">THÀNH CÔNG RỰC RỠ!</span>`;
-        document.getElementById('subStatus').textContent = `Tìm thấy bộ 69 số (Đ/Đ >= 6) tại lượt thứ ${turn} sau ${sessions} lần reset.`;
+        document.getElementById('status').innerHTML = `<span style="color:#4ade80">✅ KHỚP ĐỊNH MỆNH LỘC PHÁT!</span>`;
+        document.getElementById('subStatus').textContent = `Tại lượt thứ ${turn} sau ${sessions} lần reset.`;
         updateUI(true);
-        alert("Đã khớp định mệnh! Đã tìm được bộ 69 số hợp lệ tại lượt thứ " + turn);
-      } else {
-        document.getElementById('status').textContent = "Đã dừng thủ công.";
       }
     }
 
@@ -217,11 +224,10 @@
     async function saveToDB(arr){ try { await docRef.set({numbers:arr}); } catch(e){} }
     document.getElementById('copyBtn').onclick = () => {
       navigator.clipboard.writeText(document.getElementById('output').value);
-      alert("Đã sao chép 69 số!");
+      alert("Đã sao chép dàn 68 số!");
     };
     document.getElementById('clearBtn').onclick = () => {
       selectedArr = []; updateUI();
-      document.getElementById('status').textContent = "Sẵn sàng...";
     };
     document.getElementById('undoBtn').onclick = () => {
       selectedArr = JSON.parse(localStorage.getItem('undo_grid') || "[]");
