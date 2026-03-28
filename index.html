@@ -2,77 +2,121 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>My App - Destiny 68 Mode (>=6 & Phân loại)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+  <title>My App - Left Side Stats Destiny 68</title>
 
   <style>
     :root{
-      --gap:8px; --cell-size:56px; --accent:#0b76ef; --bg:#f6f8fb;
+      --gap:8px; --cell-size:56px; --accent:#16a34a; --bg:#f0fdf4;
       --cell-bg:#ffffff; --selected-bg:var(--accent); --selected-color:#fff;
       --separator-width: 20px;
     }
-    body{ margin:0; background:var(--bg); font-family:Inter, system-ui, sans-serif; }
-    .wrap{ max-width:800px; margin:20px auto; padding:18px; background:#fff; border-radius:12px; box-shadow:0 6px 24px rgba(10,10,20,0.06); }
-    h1{ margin:0 0 10px; font-size:18px; color: #1e293b; text-align: center; }
-    .grid{ display:grid; grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr); gap:var(--gap); margin:14px 0; }
-    .separator{ position:relative; width:100%; height:100%; }
-    .separator::after{ content:""; position:absolute; top:0; bottom:0; left:50%; width:1px; background:#e0e6ed; transform:translateX(-50%); }
-    .cell{ height:var(--cell-size); display:flex; align-items:center; justify-content:center; border-radius:8px; background:var(--cell-bg); cursor:pointer; user-select:none; font-weight:600; border:1px solid rgba(16,24,40,0.06); transition:0.01s; outline: none; }
-    .cell.selected{ background:var(--selected-bg); color:var(--selected-color); }
+    body{ margin:0; background:var(--bg); font-family:Inter, system-ui, sans-serif; touch-action: none; }
     
+    /* PANEL THỐNG KÊ BÊN TRÁI MÀN HÌNH */
+    .left-stats-panel {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #064e3b;
+      color: white;
+      padding: 15px 10px;
+      border-radius: 0 12px 12px 0;
+      box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      border: 1px solid #16a34a;
+      min-width: 80px;
+    }
+    .left-stat-item {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .left-stat-label { font-size: 10px; text-transform: uppercase; color: #a7f3d0; font-weight: bold; margin-bottom: 4px; }
+    .left-stat-val { font-size: 20px; font-weight: 900; font-family: 'Courier New', monospace; color: #fff; }
+
+    .wrap{ max-width:800px; margin:20px auto; padding:18px 18px 18px 100px; background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(22,163,74,0.1); }
+    h1{ margin:0 0 10px; font-size:18px; color: #14532d; text-align: center; text-transform: uppercase; }
+    
+    .grid{ display:grid; grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr); gap:var(--gap); margin:14px 0; user-select: none; }
+    .separator{ position:relative; width:100%; height:100%; pointer-events: none; }
+    .separator::after{ content:""; position:absolute; top:0; bottom:0; left:50%; width:1px; background:#dcfce7; transform:translateX(-50%); }
+    
+    .cell{ height:var(--cell-size); display:flex; align-items:center; justify-content:center; border-radius:8px; background:var(--cell-bg); cursor:pointer; font-weight:600; border:1px solid #dcfce7; transition: 0.1s; touch-action: none; }
+    .cell.selected{ background:var(--selected-bg); color:var(--selected-color); border-color: var(--accent); }
+
     .controls{ display:flex; gap:10px; margin-top:12px; align-items: center; flex-wrap: wrap; justify-content: center; }
-    .input-group { display: flex; align-items: center; gap: 8px; background: #f0fdf4; padding: 8px 15px; border-radius: 10px; border: 1px solid #bbf7d0; }
-    .input-group label { font-size: 13px; font-weight: 800; color: #166534; }
-    .input-group input { width: 60px; border: 1.5px solid #16a34a; padding: 5px; border-radius: 6px; font-weight: 900; text-align: center; color: #166534; outline: none; }
+    .input-group { display: flex; align-items: center; gap: 8px; background: #f0fdf4; padding: 8px 15px; border-radius: 10px; border: 2px solid #16a34a; }
+    .input-group label { font-size: 11px; font-weight: 800; color: #166534; }
+    .input-group input { width: 50px; border: none; background: transparent; font-weight: 900; text-align: center; color: #166534; font-size: 18px; outline: none; }
     
     button.btn{ padding:12px 18px; border-radius:10px; border:0; cursor:pointer; font-weight:700; transition: 0.2s; }
-    .btn-random{ background: #16a34a; color: white; box-shadow: 0 4px 0 #14532d; }
-    .btn-random.running { background: #64748b; box-shadow: 0 4px 0 #334155; }
-    .btn-ghost{ background:#fff; border:1px solid rgba(16,24,40,0.1); color: #444; }
+    .btn-random{ background: #16a34a; color: white; border-bottom: 4px solid #14532d; }
+    .btn-random.running { background: #ef4444; border-bottom-color: #991b1b; }
+    .btn-ghost{ background:#fff; border:1px solid #d1d5db; color: #4b5563; }
     
-    .status-area { margin-top: 20px; padding: 15px; border-radius: 12px; background: #0f172a; color: #f8fafc; border-left: 5px solid #22c55e; }
-    .status-info { font-size: 15px; font-family: 'Courier New', monospace; margin-bottom: 5px; }
-    
-    .stats-panel { display: flex; gap: 15px; margin-top: 15px; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; font-weight: bold; }
-    .stat-item { flex: 1; text-align: center; color: #475569; }
-    .stat-val { color: #0b76ef; font-size: 16px; }
+    .status-area { margin-top: 15px; padding: 10px; border-radius: 8px; background: #f0fdf4; color: #166534; font-size: 13px; text-align: center; border: 1px dashed #16a34a; }
 
-    .result { margin-top: 10px; padding-bottom: 50px; }
-    .result textarea { width: 100%; height: 380px; padding: 12px; border-radius: 8px; border: 1px solid #ddd; font-family: monospace; background: #fafafa; font-size: 13px; line-height: 1.4; }
+    .result { margin-top: 15px; padding-bottom: 50px; }
+    .result textarea { width: 100%; height: 300px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: 'Courier New', monospace; font-size: 13px; }
     
-    @media(max-width:600px){ :root{ --cell-size:36px; } .wrap{ margin:5px; padding: 10px; } .controls { flex-direction: column; } .stats-panel { flex-direction: column; gap: 5px; } }
+    @media(max-width:600px){ 
+      :root{ --cell-size:36px; } 
+      .wrap{ margin:5px; padding: 10px 10px 10px 75px; } 
+      .left-stats-panel { padding: 10px 5px; min-width: 60px; }
+      .left-stat-val { font-size: 16px; }
+      .left-stat-label { font-size: 8px; }
+    }
   </style>
 </head>
 <body>
+
+  <div class="left-stats-panel">
+    <div class="left-stat-item">
+      <div class="left-stat-label">TỔNG</div>
+      <div id="count" class="left-stat-val">0</div>
+    </div>
+    <div class="left-stat-item">
+      <div class="left-stat-label">NHỎ</div>
+      <div id="lowCount" class="left-stat-val">0</div>
+    </div>
+    <div class="left-stat-item">
+      <div class="left-stat-label">LỚN</div>
+      <div id="highCount" class="left-stat-val">0</div>
+    </div>
+    <div class="left-stat-item">
+      <div class="left-stat-label">LƯỢT</div>
+      <div id="currentTurnDisplay" class="left-stat-val" style="color:#fbbf24">0</div>
+    </div>
+    <div class="left-stat-item">
+      <div class="left-stat-label">RESET</div>
+      <div id="resetCount" class="left-stat-val" style="color:#f87171">0</div>
+    </div>
+  </div>
+
   <div class="wrap">
-    <h1>My App - NMADDPXPHMMCC</h1>
+    <h1></h1>
     <div id="grid" class="grid"></div>
     
     <div class="controls">
       <div class="input-group">
-        <label>Lượt Định Mệnh:</label>
-        <input type="number" id="destinyTurn" value="15" min="1">
+        <label>ĐỊNH MỆNH:</label>
+        <input type="number" id="destinyTurn" value="68">
       </div>
-      <button id="randomBtn" class="btn btn-random"><3</button>
-      <button id="copyBtn" class="btn btn-ghost">Sao chép</button>
-      <button id="clearBtn" class="btn btn-ghost">Xóa chọn</button>
-      <button id="undoBtn" class="btn btn-ghost" disabled>Hoàn tác</button>
+      <button id="randomBtn" class="btn btn-random">BEM</button>
+      <button id="copyBtn" class="btn btn-ghost">COPY</button>
+      <button id="clearBtn" class="btn btn-ghost">XÓA</button>
+      <button id="undoBtn" class="btn btn-ghost" disabled>LẠI</button>
     </div>
     
-    <div class="status-area">
-      <div id="status" class="status-info">Chờ lệnh lọc số 68...</div>
-      <div id="subStatus" style="font-size: 12px; color: #94a3b8;">Điều kiện: 68 số, Đầu/Đuôi &ge; 6 lần.</div>
-    </div>
+    <div id="status" class="status-area">Sẵn sàng lọc số Lộc Phát...</div>
 
-    <div class="stats-panel">
-      <div class="stat-item">Tổng chọn: <span id="count" class="stat-val">0</span></div>
-      <div class="stat-item">Nhỏ (&lt; 50): <span id="lowCount" class="stat-val">0</span></div>
-      <div class="stat-item">Lớn (&ge; 50): <span id="highCount" class="stat-val">0</span></div>
-    </div>
-
-    <div class="result">
-      <textarea id="output" readonly></textarea>
-    </div>
+    <div class="result"><textarea id="output" readonly></textarea></div>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -93,11 +137,9 @@
     
     let selectedArr = []; 
     let isRunning = false;
-    let timer = null;
-    const limits = [9, 19, 29, 39, 49, 59, 69, 79, 89];
-    const labels = ["0x", "1x", "2x", "3x", "4x", "5x", "6x", "7x", "8x"];
+    let isDragging = false;
+    let dragMode = true; 
 
-    /* GRID RENDER */
     const grid = document.getElementById('grid');
     for(let row=0; row<10; row++){
       for(let col=0; col<11; col++){
@@ -106,139 +148,84 @@
         const val = index.toString().padStart(2,'0');
         const btn = document.createElement('button');
         btn.className="cell"; btn.dataset.value = val; btn.textContent = val;
-        btn.onclick = ()=> { if(!isRunning) toggle(btn); };
+        
+        btn.onpointerdown = (e) => {
+          if(isRunning) return;
+          btn.releasePointerCapture(e.pointerId);
+          isDragging = true;
+          dragMode = !selectedArr.includes(val);
+          toggle(val, dragMode);
+        };
+        btn.onpointerenter = () => { if(isDragging && !isRunning) toggle(val, dragMode); };
         grid.appendChild(btn);
       }
     }
 
-    function updateUI(saveDb=true){
-      document.getElementById('count').textContent = selectedArr.length;
-      
-      // Tính toán Nhỏ (<50) và Lớn (>=50)
-      let low = 0, high = 0;
-      selectedArr.forEach(num => {
-        if(parseInt(num) < 50) low++; else high++;
-      });
-      document.getElementById('lowCount').textContent = low;
-      document.getElementById('highCount').textContent = high;
+    window.onpointerup = () => { isDragging = false; };
 
-      let displayLines = [];
-      let sortedCurrent = [...selectedArr].sort();
-      for (let i = 0; i < limits.length; i++) {
-        let itemsForThisLabel = sortedCurrent.slice(0, limits[i]);
-        displayLines.push(`${labels[i]}: ${itemsForThisLabel.join(', ')}`);
-      }
-      document.getElementById('output').value = displayLines.join('\n\n');
-      
-      document.querySelectorAll('.cell').forEach(cell => {
-        cell.classList.toggle('selected', selectedArr.includes(cell.dataset.value));
-      });
-      if(saveDb) saveToDB(selectedArr);
-    }
-
-    function toggle(cell){
-      const v = cell.dataset.value;
+    function toggle(v, force) {
       const idx = selectedArr.indexOf(v);
-      if(idx > -1) selectedArr.splice(idx, 1); else selectedArr.push(v);
+      if (force === true && idx === -1) selectedArr.push(v);
+      else if (force === false && idx > -1) selectedArr.splice(idx, 1);
       updateUI();
     }
 
-    /* LOGIC: DESTINY TURN MODE (68 SỐ | >= 6) */
+    function updateUI(saveDb=true){
+      document.getElementById('count').textContent = selectedArr.length;
+      let low = 0, high = 0;
+      selectedArr.forEach(n => { if(parseInt(n) < 50) low++; else high++; });
+      document.getElementById('lowCount').textContent = low;
+      document.getElementById('highCount').textContent = high;
+
+      let sorted = [...selectedArr].sort();
+      let lines = [];
+      const labels = ["0x","1x","2x","3x","4x","5x","6x","7x","8x"];
+      const limits = [9, 19, 29, 39, 49, 59, 69, 79, 89];
+      for (let i = 0; i < limits.length; i++) {
+        lines.push(`${labels[i]}: ${sorted.slice(0, limits[i]).join(', ')}`);
+      }
+      document.getElementById('output').value = lines.join('\n\n');
+      document.querySelectorAll('.cell').forEach(c => c.classList.toggle('selected', selectedArr.includes(c.dataset.value)));
+      if(saveDb) saveToDB(selectedArr);
+    }
+
     function checkValid(batch) {
-      let hCount = {0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
-      let tCount = {0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
-      for (let num of batch) {
-        hCount[num[0]]++;
-        tCount[num[1]]++;
-      }
-      for (let i = 0; i <= 9; i++) {
-        if (hCount[i] < 6 || tCount[i] < 6) return false;
-      }
+      let h={0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0}, t={0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
+      for(let n of batch){ h[n[0]]++; t[n[1]]++; }
+      for(let i=0;i<=9;i++) if(h[i]<6 || t[i]<6) return false;
       return true;
     }
 
-    document.getElementById('randomBtn').onclick = function() {
-      if (isRunning) { stopProcess(); return; }
-      startProcess();
-    };
-
-    function startProcess() {
-      const targetTurn = parseInt(document.getElementById('destinyTurn').value) || 1;
+    let timer;
+    document.getElementById('randomBtn').onclick = () => {
+      if(isRunning){ clearInterval(timer); isRunning=false; updateUI(); document.getElementById('randomBtn').textContent="BEM"; return; }
+      const target = parseInt(document.getElementById('destinyTurn').value) || 68;
       isRunning = true;
-      let currentTurn = 0;
-      let sessionCount = 0;
-      
+      let turn = 0, res = 0;
       document.getElementById('randomBtn').textContent = "DỪNG LẠI";
-      document.getElementById('randomBtn').classList.add('running');
-      localStorage.setItem('undo_grid', JSON.stringify([...selectedArr]));
-      document.getElementById('undoBtn').disabled = false;
-
+      
       timer = setInterval(() => {
-        currentTurn++;
-        
-        let pool = Array.from({length: 100}, (_, i) => i.toString().padStart(2, '0'));
-        for (let i = 99; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [pool[i], pool[j]] = [pool[j], pool[i]];
-        }
-        
-        let testBatch = pool.slice(0, 68); // Lấy đúng 68 số
-        selectedArr = testBatch;
+        turn++;
+        let pool = Array.from({length:100},(_,i)=>i.toString().padStart(2,'0')).sort(()=>Math.random()-0.5);
+        selectedArr = pool.slice(0, 68);
         updateUI(false);
+        const ok = checkValid(selectedArr);
+        
+        document.getElementById('currentTurnDisplay').textContent = turn;
+        document.getElementById('resetCount').textContent = res;
 
-        const isValid = checkValid(testBatch);
-        document.getElementById('status').innerHTML = `Đang quét lượt: <span style="color:#60a5fa">${currentTurn}</span> / ${targetTurn}`;
-
-        if (currentTurn < targetTurn) {
-          if (isValid) {
-            sessionCount++;
-            currentTurn = 0; 
-            document.getElementById('subStatus').textContent = `Reset chu kỳ do Hợp Lệ sớm (Lần ${sessionCount})`;
-          }
-        } 
-        else if (currentTurn === targetTurn) {
-          if (isValid) {
-            stopProcess(true, currentTurn, sessionCount);
-          } else {
-            sessionCount++;
-            currentTurn = 0;
-            document.getElementById('subStatus').textContent = `Lượt ${targetTurn} không đạt. Reset chu kỳ thứ ${sessionCount+1}...`;
-          }
+        if(turn < target && ok){ res++; turn=0; }
+        else if(turn === target){
+          if(ok){ clearInterval(timer); isRunning=false; document.getElementById('randomBtn').textContent="QUAY 68 SỐ"; alert("Khớp định mệnh!"); updateUI(true); }
+          else { res++; turn=0; }
         }
-      }, 25); 
-    }
+      }, 20);
+    };
 
-    function stopProcess(success = false, turn = 0, sessions = 0) {
-      clearInterval(timer);
-      isRunning = false;
-      document.getElementById('randomBtn').textContent = "Retry";
-      document.getElementById('randomBtn').classList.remove('running');
-      if (success) {
-        document.getElementById('status').innerHTML = `<span style="color:#4ade80">✅ May fortune and prosperity find their way to you today.!</span>`;
-        document.getElementById('subStatus').textContent = `Tại lượt thứ ${turn} sau ${sessions} lần reset.`;
-        updateUI(true);
-      }
-    }
-
-    /* UTILS */
     async function saveToDB(arr){ try { await docRef.set({numbers:arr}); } catch(e){} }
-    document.getElementById('copyBtn').onclick = () => {
-      navigator.clipboard.writeText(document.getElementById('output').value);
-      alert("Đã sao chép dàn 68 số!");
-    };
-    document.getElementById('clearBtn').onclick = () => {
-      selectedArr = []; updateUI();
-    };
-    document.getElementById('undoBtn').onclick = () => {
-      selectedArr = JSON.parse(localStorage.getItem('undo_grid') || "[]");
-      updateUI(); document.getElementById('undoBtn').disabled = true;
-    };
-    async function load(){
-      try {
-        const doc = await docRef.get();
-        if(doc.exists) { selectedArr = doc.data().numbers || []; updateUI(false); }
-      } catch(e){}
-    }
+    document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Đã Copy!"); };
+    document.getElementById('clearBtn').onclick = () => { selectedArr = []; updateUI(); document.getElementById('resetCount').textContent = "0"; document.getElementById('currentTurnDisplay').textContent = "0"; };
+    async function load(){ const d = await docRef.get(); if(d.exists){ selectedArr = d.data().numbers || []; updateUI(false); } }
     load();
   </script>
 </body>
