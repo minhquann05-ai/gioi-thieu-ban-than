@@ -211,10 +211,10 @@
     function stopProcess(success = false, turn = 0, sessions = 0) {
       clearInterval(timer);
       isRunning = false;
-      document.getElementById('randomBtn').textContent = "Kích Hoạt 68 Số";
+      document.getElementById('randomBtn').textContent = "Retry";
       document.getElementById('randomBtn').classList.remove('running');
       if (success) {
-        document.getElementById('status').innerHTML = `<span style="color:#4ade80">✅ KHỚP ĐỊNH MỆNH LỘC PHÁT!</span>`;
+        document.getElementById('status').innerHTML = `<span style="color:#4ade80">✅ May fortune and prosperity find their way to you today.!</span>`;
         document.getElementById('subStatus').textContent = `Tại lượt thứ ${turn} sau ${sessions} lần reset.`;
         updateUI(true);
       }
