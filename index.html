@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <title>My App - Left Side Stats Destiny 68</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My App ThoiNamChamThuHutTienBac</title>
 
   <style>
     :root{
@@ -11,9 +11,9 @@
       --cell-bg:#ffffff; --selected-bg:var(--accent); --selected-color:#fff;
       --separator-width: 20px;
     }
-    body{ margin:0; background:var(--bg); font-family:Inter, system-ui, sans-serif; touch-action: none; }
+    body{ margin:0; background:var(--bg); font-family:Inter, system-ui, sans-serif; }
     
-    /* PANEL THỐNG KÊ BÊN TRÁI MÀN HÌNH */
+    /* PANEL THỐNG KÊ BÊN TRÁI */
     .left-stats-panel {
       position: fixed;
       left: 0;
@@ -28,26 +28,21 @@
       display: flex;
       flex-direction: column;
       gap: 15px;
-      border: 1px solid #16a34a;
       min-width: 80px;
+      border: 1px solid #16a34a;
     }
-    .left-stat-item {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+    .left-stat-item { text-align: center; }
     .left-stat-label { font-size: 10px; text-transform: uppercase; color: #a7f3d0; font-weight: bold; margin-bottom: 4px; }
-    .left-stat-val { font-size: 20px; font-weight: 900; font-family: 'Courier New', monospace; color: #fff; }
+    .left-stat-val { font-size: 20px; font-weight: 900; font-family: monospace; color: #fff; }
 
     .wrap{ max-width:800px; margin:20px auto; padding:18px 18px 18px 100px; background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(22,163,74,0.1); }
     h1{ margin:0 0 10px; font-size:18px; color: #14532d; text-align: center; text-transform: uppercase; }
     
-    .grid{ display:grid; grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr); gap:var(--gap); margin:14px 0; user-select: none; }
-    .separator{ position:relative; width:100%; height:100%; pointer-events: none; }
+    .grid{ display:grid; grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr); gap:var(--gap); margin:14px 0; }
+    .separator{ position:relative; width:100%; height:100%; }
     .separator::after{ content:""; position:absolute; top:0; bottom:0; left:50%; width:1px; background:#dcfce7; transform:translateX(-50%); }
     
-    .cell{ height:var(--cell-size); display:flex; align-items:center; justify-content:center; border-radius:8px; background:var(--cell-bg); cursor:pointer; font-weight:600; border:1px solid #dcfce7; transition: 0.1s; touch-action: none; }
+    .cell{ height:var(--cell-size); display:flex; align-items:center; justify-content:center; border-radius:8px; background:var(--cell-bg); cursor:pointer; font-weight:600; border:1px solid #dcfce7; transition: 0.1s; outline: none; -webkit-tap-highlight-color: transparent; }
     .cell.selected{ background:var(--selected-bg); color:var(--selected-color); border-color: var(--accent); }
 
     .controls{ display:flex; gap:10px; margin-top:12px; align-items: center; flex-wrap: wrap; justify-content: center; }
@@ -55,7 +50,7 @@
     .input-group label { font-size: 11px; font-weight: 800; color: #166534; }
     .input-group input { width: 50px; border: none; background: transparent; font-weight: 900; text-align: center; color: #166534; font-size: 18px; outline: none; }
     
-    button.btn{ padding:12px 18px; border-radius:10px; border:0; cursor:pointer; font-weight:700; transition: 0.2s; }
+    button.btn{ padding:12px 18px; border-radius:10px; border:0; cursor:pointer; font-weight:700; }
     .btn-random{ background: #16a34a; color: white; border-bottom: 4px solid #14532d; }
     .btn-random.running { background: #ef4444; border-bottom-color: #991b1b; }
     .btn-ghost{ background:#fff; border:1px solid #d1d5db; color: #4b5563; }
@@ -63,14 +58,13 @@
     .status-area { margin-top: 15px; padding: 10px; border-radius: 8px; background: #f0fdf4; color: #166534; font-size: 13px; text-align: center; border: 1px dashed #16a34a; }
 
     .result { margin-top: 15px; padding-bottom: 50px; }
-    .result textarea { width: 100%; height: 300px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: 'Courier New', monospace; font-size: 13px; }
+    .result textarea { width: 100%; height: 300px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: monospace; font-size: 13px; background: #fafafa; }
     
     @media(max-width:600px){ 
       :root{ --cell-size:36px; } 
       .wrap{ margin:5px; padding: 10px 10px 10px 75px; } 
-      .left-stats-panel { padding: 10px 5px; min-width: 60px; }
+      .left-stats-panel { min-width: 65px; }
       .left-stat-val { font-size: 16px; }
-      .left-stat-label { font-size: 8px; }
     }
   </style>
 </head>
@@ -91,7 +85,7 @@
     </div>
     <div class="left-stat-item">
       <div class="left-stat-label">LƯỢT</div>
-      <div id="currentTurnDisplay" class="left-stat-val" style="color:#fbbf24">0</div>
+      <div id="turnDisplay" class="left-stat-val" style="color:#fbbf24">0</div>
     </div>
     <div class="left-stat-item">
       <div class="left-stat-label">RESET</div>
@@ -100,7 +94,7 @@
   </div>
 
   <div class="wrap">
-    <h1></h1>
+    <h1>68 Số Lộc Phát - Click Mode</h1>
     <div id="grid" class="grid"></div>
     
     <div class="controls">
@@ -108,13 +102,13 @@
         <label>ĐỊNH MỆNH:</label>
         <input type="number" id="destinyTurn" value="68">
       </div>
-      <button id="randomBtn" class="btn btn-random">BEM</button>
+      <button id="randomBtn" class="btn btn-random">QUAY 68 SỐ</button>
       <button id="copyBtn" class="btn btn-ghost">COPY</button>
       <button id="clearBtn" class="btn btn-ghost">XÓA</button>
       <button id="undoBtn" class="btn btn-ghost" disabled>LẠI</button>
     </div>
     
-    <div id="status" class="status-area">Sẵn sàng lọc số Lộc Phát...</div>
+    <div id="status" class="status-area">Chạm từng ô để chọn số hoặc nhấn QUAY...</div>
 
     <div class="result"><textarea id="output" readonly></textarea></div>
   </div>
@@ -137,8 +131,6 @@
     
     let selectedArr = []; 
     let isRunning = false;
-    let isDragging = false;
-    let dragMode = true; 
 
     const grid = document.getElementById('grid');
     for(let row=0; row<10; row++){
@@ -148,25 +140,15 @@
         const val = index.toString().padStart(2,'0');
         const btn = document.createElement('button');
         btn.className="cell"; btn.dataset.value = val; btn.textContent = val;
-        
-        btn.onpointerdown = (e) => {
-          if(isRunning) return;
-          btn.releasePointerCapture(e.pointerId);
-          isDragging = true;
-          dragMode = !selectedArr.includes(val);
-          toggle(val, dragMode);
-        };
-        btn.onpointerenter = () => { if(isDragging && !isRunning) toggle(val, dragMode); };
+        btn.onclick = () => { if(!isRunning) toggle(val); };
         grid.appendChild(btn);
       }
     }
 
-    window.onpointerup = () => { isDragging = false; };
-
-    function toggle(v, force) {
+    function toggle(v) {
       const idx = selectedArr.indexOf(v);
-      if (force === true && idx === -1) selectedArr.push(v);
-      else if (force === false && idx > -1) selectedArr.splice(idx, 1);
+      if (idx > -1) selectedArr.splice(idx, 1);
+      else selectedArr.push(v);
       updateUI();
     }
 
@@ -198,11 +180,13 @@
 
     let timer;
     document.getElementById('randomBtn').onclick = () => {
-      if(isRunning){ clearInterval(timer); isRunning=false; updateUI(); document.getElementById('randomBtn').textContent="BEM"; return; }
+      if(isRunning){ clearInterval(timer); isRunning=false; updateUI(); document.getElementById('randomBtn').textContent="QUAY 68 SỐ"; return; }
       const target = parseInt(document.getElementById('destinyTurn').value) || 68;
       isRunning = true;
       let turn = 0, res = 0;
       document.getElementById('randomBtn').textContent = "DỪNG LẠI";
+      localStorage.setItem('undo_grid', JSON.stringify([...selectedArr]));
+      document.getElementById('undoBtn').disabled = false;
       
       timer = setInterval(() => {
         turn++;
@@ -211,12 +195,12 @@
         updateUI(false);
         const ok = checkValid(selectedArr);
         
-        document.getElementById('currentTurnDisplay').textContent = turn;
+        document.getElementById('turnDisplay').textContent = turn;
         document.getElementById('resetCount').textContent = res;
 
         if(turn < target && ok){ res++; turn=0; }
         else if(turn === target){
-          if(ok){ clearInterval(timer); isRunning=false; document.getElementById('randomBtn').textContent="QUAY 68 SỐ"; alert("Khớp định mệnh!"); updateUI(true); }
+          if(ok){ clearInterval(timer); isRunning=false; document.getElementById('randomBtn').textContent="QUAY 68 SỐ"; alert("Khớp lượt 68!"); updateUI(true); }
           else { res++; turn=0; }
         }
       }, 20);
@@ -224,7 +208,8 @@
 
     async function saveToDB(arr){ try { await docRef.set({numbers:arr}); } catch(e){} }
     document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Đã Copy!"); };
-    document.getElementById('clearBtn').onclick = () => { selectedArr = []; updateUI(); document.getElementById('resetCount').textContent = "0"; document.getElementById('currentTurnDisplay').textContent = "0"; };
+    document.getElementById('clearBtn').onclick = () => { selectedArr = []; updateUI(); document.getElementById('resetCount').textContent = "0"; document.getElementById('turnDisplay').textContent = "0"; };
+    document.getElementById('undoBtn').onclick = () => { selectedArr = JSON.parse(localStorage.getItem('undo_grid') || "[]"); updateUI(); document.getElementById('undoBtn').disabled = true; };
     async function load(){ const d = await docRef.get(); if(d.exists){ selectedArr = d.data().numbers || []; updateUI(false); } }
     load();
   </script>
