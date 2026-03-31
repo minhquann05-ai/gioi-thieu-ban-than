@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>My App - Tool Friendly Click Mode</title>
+  <title>My App - Scroll & Order Mode</title>
 
   <style>
     :root{
@@ -16,7 +16,6 @@
     .wrap{ max-width:800px; margin:0 auto; padding:10px; }
     h1{ margin:0 0 15px; font-size:20px; color: #14532d; text-align: center; text-transform: uppercase; }
     
-    /* GRID SẠCH - KHÔNG BỊ ĐÈ */
     .grid{ 
       display:grid; 
       grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr); 
@@ -28,7 +27,6 @@
     .cell{ height:var(--cell-size); display:flex; align-items:center; justify-content:center; border-radius:8px; background:var(--cell-bg); cursor:pointer; font-weight:600; border:1px solid #e2e8f0; font-size: 16px; transition: 0.1s; outline: none; }
     .cell.selected{ background:var(--selected-bg); color:var(--selected-color); border-color: var(--accent); }
 
-    /* KHU VỰC ĐIỀU KHIỂN & THỐNG KÊ GỘP CHUNG */
     .controls-container {
       background: #f1f5f9;
       padding: 15px;
@@ -57,15 +55,24 @@
     .btn-random.running { background: #ef4444; }
     .btn-ghost{ background:#fff; border:1px solid #cbd5e1; color: #334155; }
     
-    .status-msg { margin-top: 10px; font-size: 12px; color: #64748b; text-align: center; font-style: italic; }
+    /* TẠO KHOẢNG CÁCH 1 MÀN HÌNH ĐỂ PHẢI CUỘN MỚI THẤY KẾT QUẢ */
+    .spacer-divider {
+      height: 100vh; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-weight: bold;
+      font-style: italic;
+    }
 
-    .result { margin-top: 20px; }
-    .result textarea { width: 100%; height: 250px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: monospace; font-size: 13px; background: #fafafa; }
+    .result { margin-top: 20px; padding-bottom: 100px; }
+    .result h2 { font-size: 16px; color: #475569; margin-bottom: 10px; }
+    .result textarea { width: 100%; height: 350px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: monospace; font-size: 14px; background: #fafafa; line-height: 1.6; }
     
     @media(max-width:600px){ 
       :root{ --cell-size:42px; --gap:5px; --separator-width:10px; }
       body { padding: 10px; }
-      .stat-val { font-size: 15px; }
     }
   </style>
 </head>
@@ -94,11 +101,14 @@
         <button id="copyBtn" class="btn btn-ghost">COPY</button>
         <button id="clearBtn" class="btn btn-ghost">XÓA</button>
       </div>
-      
-      <div id="status" class="status-msg">Hệ thống sẵn sàng...</div>
     </div>
 
-    <div class="result"><textarea id="output" readonly></textarea></div>
+    <div class="spacer-divider">▼ Cuộn xuống để xem kết quả dàn số ▼</div>
+
+    <div class="result">
+      <h2>KẾT QUẢ DÀN (THEO THỨ TỰ CHỌN)</h2>
+      <textarea id="output" readonly></textarea>
+    </div>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
@@ -147,14 +157,19 @@
       document.getElementById('lowCount').textContent = low;
       document.getElementById('highCount').textContent = high;
 
-      let sorted = [...selectedArr].sort();
-      let lines = [];
+      let displayLines = [];
+      // GIỮ NGUYÊN THỨ TỰ (KHÔNG SORT)
+      let currentSelection = [...selectedArr]; 
+      
       const labels = ["0x","1x","2x","3x","4x","5x","6x","7x","8x"];
       const limits = [9, 19, 29, 39, 49, 59, 69, 79, 89];
+      
       for (let i = 0; i < limits.length; i++) {
-        lines.push(`${labels[i]}: ${sorted.slice(0, limits[i]).join(', ')}`);
+        let itemsForThisLabel = currentSelection.slice(0, limits[i]);
+        displayLines.push(`${labels[i]}: ${itemsForThisLabel.join(', ')}`);
       }
-      document.getElementById('output').value = lines.join('\n\n');
+      
+      document.getElementById('output').value = displayLines.join('\n\n');
       document.querySelectorAll('.cell').forEach(c => c.classList.toggle('selected', selectedArr.includes(c.dataset.value)));
       if(saveDb) saveToDB(selectedArr);
     }
@@ -176,6 +191,7 @@
       
       timer = setInterval(() => {
         turn++;
+        // Tạo 100 số và xáo trộn ngẫu nhiên hoàn toàn mỗi lượt
         let pool = Array.from({length:100},(_,i)=>i.toString().padStart(2,'0')).sort(()=>Math.random()-0.5);
         selectedArr = pool.slice(0, 68);
         updateUI(false);
@@ -193,7 +209,7 @@
     };
 
     async function saveToDB(arr){ try { await docRef.set({numbers:arr}); } catch(e){} }
-    document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Copy!"); };
+    document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Copy xong!"); };
     document.getElementById('clearBtn').onclick = () => { selectedArr = []; updateUI(); document.getElementById('resetCount').textContent = "0"; document.getElementById('turnDisplay').textContent = "0"; };
     async function load(){ const d = await docRef.get(); if(d.exists){ selectedArr = d.data().numbers || []; updateUI(false); } }
     load();
