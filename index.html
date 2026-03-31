@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <title>My App</title>
+  <title>My App - Tool Compatibility Fixed</title>
 
   <style>
     :root{
@@ -11,15 +11,15 @@
       --cell-bg:#ffffff; --selected-bg:var(--accent); --selected-color:#fff;
       --separator-width: 12px;
     }
-    body{ margin:0; background:var(--bg); font-family:Inter, system-ui, sans-serif; padding-top: 60px; /* Chừa chỗ cho thanh header */ }
+    /* FIX: Tăng padding-top để thanh header không đè lên nội dung */
+    body{ margin:0; background:var(--bg); font-family:Inter, system-ui, sans-serif; padding-top: 70px; }
     
-    /* THANH THỐNG KÊ NGANG CỐ ĐỊNH PHÍA TRÊN */
     .top-stats-bar {
       position: fixed;
       top: 0; left: 0; right: 0;
       background: #064e3b;
       color: white;
-      height: 50px;
+      height: 60px; /* Tăng nhẹ chiều cao để dễ nhìn */
       display: flex;
       align-items: center;
       justify-content: space-around;
@@ -28,14 +28,14 @@
       border-bottom: 2px solid #16a34a;
       padding: 0 5px;
     }
-    .stat-box { text-align: center; line-height: 1.2; }
+    .stat-box { text-align: center; }
     .stat-label { font-size: 9px; text-transform: uppercase; color: #a7f3d0; font-weight: bold; }
     .stat-val { font-size: 16px; font-weight: 900; font-family: monospace; }
 
-    .wrap{ max-width:600px; margin:10px auto; padding:12px; background:#fff; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.05); }
+    /* FIX: Thêm margin-top cho wrap để tách biệt hẳn với header */
+    .wrap{ max-width:600px; margin:20px auto; padding:12px; background:#fff; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.05); position: relative; }
     h1{ margin:0 0 10px; font-size:16px; color: #14532d; text-align: center; text-transform: uppercase; }
     
-    /* GRID TỐI ƯU KHÔNG BỊ TRÀN */
     .grid{ 
       display:grid; 
       grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr); 
@@ -63,9 +63,10 @@
     .result textarea { width: 100%; height: 250px; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: monospace; font-size: 12px; background: #fafafa; line-height: 1.4; }
     
     @media(max-width:600px){ 
-      :root{ --cell-size:38px; --gap:4px; --separator-width:8px; }
+      :root{ --cell-size:40px; --gap:4px; --separator-width:8px; }
+      body { padding-top: 80px; } /* Header mobile cần rộng rãi hơn */
       .stat-val { font-size: 14px; }
-      .wrap { margin: 5px; }
+      .wrap { margin: 10px; }
     }
   </style>
 </head>
@@ -80,7 +81,7 @@
   </div>
 
   <div class="wrap">
-    <h1>MyAppMyIPLucky</h1>
+    <h1>68 Số - Destiny Fixed</h1>
     <div id="grid" class="grid"></div>
     
     <div class="controls">
@@ -93,7 +94,7 @@
       <button id="clearBtn" class="btn btn-ghost">XÓA</button>
     </div>
     
-    <div id="status" class="status-area">Chạm để chọn hoặc nhấn QUAY...</div>
+    <div id="status" class="status-area">Ready...</div>
 
     <div class="result"><textarea id="output" readonly></textarea></div>
   </div>
@@ -102,6 +103,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
   <script>
+    // Giữ nguyên toàn bộ phần Script của bạn
     const firebaseConfig = {
       apiKey: "AIzaSyD-tbxT6acKrTgAqNxHyDZHW2gD06KX1CI",
       authDomain: "my-work-a159e.firebaseapp.com",
@@ -183,14 +185,14 @@
 
         if(turn < target && ok){ res++; turn=0; }
         else if(turn === target){
-          if(ok){ clearInterval(timer); isRunning=false; document.getElementById('randomBtn').textContent="QUAY 68 SỐ"; alert("Khớp lượt 68!"); updateUI(true); }
+          if(ok){ clearInterval(timer); isRunning=false; document.getElementById('randomBtn').textContent="QUAY 68 SỐ"; alert("Xong!"); updateUI(true); }
           else { res++; turn=0; }
         }
       }, 20);
     };
 
     async function saveToDB(arr){ try { await docRef.set({numbers:arr}); } catch(e){} }
-    document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Đã Copy!"); };
+    document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Done!"); };
     document.getElementById('clearBtn').onclick = () => { selectedArr = []; updateUI(); document.getElementById('resetCount').textContent = "0"; document.getElementById('turnDisplay').textContent = "0"; };
     async function load(){ const d = await docRef.get(); if(d.exists){ selectedArr = d.data().numbers || []; updateUI(false); } }
     load();
