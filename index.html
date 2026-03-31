@@ -2,99 +2,101 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <title>My App - Tool Compatibility Fixed</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>My App - Tool Friendly Click Mode</title>
 
   <style>
     :root{
-      --gap:6px; --cell-size:52px; --accent:#16a34a; --bg:#f0fdf4;
-      --cell-bg:#ffffff; --selected-bg:var(--accent); --selected-color:#fff;
-      --separator-width: 12px;
+      --gap:8px; --cell-size:56px; --accent:#16a34a; --bg:#ffffff;
+      --cell-bg:#f8fafc; --selected-bg:var(--accent); --selected-color:#fff;
+      --separator-width: 20px;
     }
-    /* FIX: Tăng padding-top để thanh header không đè lên nội dung */
-    body{ margin:0; background:var(--bg); font-family:Inter, system-ui, sans-serif; padding-top: 70px; }
+    body{ margin:0; background:var(--bg); font-family:Inter, system-ui, sans-serif; padding: 20px; }
     
-    .top-stats-bar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      background: #064e3b;
-      color: white;
-      height: 60px; /* Tăng nhẹ chiều cao để dễ nhìn */
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      border-bottom: 2px solid #16a34a;
-      padding: 0 5px;
-    }
-    .stat-box { text-align: center; }
-    .stat-label { font-size: 9px; text-transform: uppercase; color: #a7f3d0; font-weight: bold; }
-    .stat-val { font-size: 16px; font-weight: 900; font-family: monospace; }
-
-    /* FIX: Thêm margin-top cho wrap để tách biệt hẳn với header */
-    .wrap{ max-width:600px; margin:20px auto; padding:12px; background:#fff; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.05); position: relative; }
-    h1{ margin:0 0 10px; font-size:16px; color: #14532d; text-align: center; text-transform: uppercase; }
+    .wrap{ max-width:800px; margin:0 auto; padding:10px; }
+    h1{ margin:0 0 15px; font-size:20px; color: #14532d; text-align: center; text-transform: uppercase; }
     
+    /* GRID SẠCH - KHÔNG BỊ ĐÈ */
     .grid{ 
       display:grid; 
       grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr); 
-      gap:var(--gap); margin:10px 0; 
+      gap:var(--gap); margin-bottom: 20px; 
     }
     .separator{ position:relative; width:100%; height:100%; }
-    .separator::after{ content:""; position:absolute; top:0; bottom:0; left:50%; width:1px; background:#dcfce7; transform:translateX(-50%); }
+    .separator::after{ content:""; position:absolute; top:0; bottom:0; left:50%; width:1px; background:#e2e8f0; transform:translateX(-50%); }
     
-    .cell{ height:var(--cell-size); display:flex; align-items:center; justify-content:center; border-radius:6px; background:var(--cell-bg); cursor:pointer; font-weight:600; border:1px solid #dcfce7; font-size: 14px; outline: none; -webkit-tap-highlight-color: transparent; }
+    .cell{ height:var(--cell-size); display:flex; align-items:center; justify-content:center; border-radius:8px; background:var(--cell-bg); cursor:pointer; font-weight:600; border:1px solid #e2e8f0; font-size: 16px; transition: 0.1s; outline: none; }
     .cell.selected{ background:var(--selected-bg); color:var(--selected-color); border-color: var(--accent); }
 
-    .controls{ display:flex; gap:8px; margin-top:12px; align-items: center; flex-wrap: wrap; justify-content: center; }
-    .input-group { display: flex; align-items: center; gap: 5px; background: #f0fdf4; padding: 6px 12px; border-radius: 8px; border: 1px solid #16a34a; }
-    .input-group label { font-size: 10px; font-weight: 800; color: #166534; }
-    .input-group input { width: 40px; border: none; background: transparent; font-weight: 900; text-align: center; color: #166534; font-size: 16px; outline: none; }
-    
-    button.btn{ padding:10px 14px; border-radius:8px; border:0; cursor:pointer; font-weight:700; font-size: 12px; }
-    .btn-random{ background: #16a34a; color: white; flex-grow: 1; }
-    .btn-random.running { background: #ef4444; }
-    .btn-ghost{ background:#fff; border:1px solid #d1d5db; color: #4b5563; }
-    
-    .status-area { margin-top: 10px; padding: 8px; border-radius: 6px; background: #f0fdf4; color: #166534; font-size: 12px; text-align: center; border: 1px dashed #16a34a; }
+    /* KHU VỰC ĐIỀU KHIỂN & THỐNG KÊ GỘP CHUNG */
+    .controls-container {
+      background: #f1f5f9;
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+    }
+    .stats-row {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+    .stat-item { text-align: center; }
+    .stat-label { font-size: 11px; font-weight: bold; color: #64748b; margin-bottom: 2px; }
+    .stat-val { font-size: 18px; font-weight: 800; color: #1e293b; font-family: monospace; }
 
-    .result { margin-top: 15px; padding-bottom: 40px; }
-    .result textarea { width: 100%; height: 250px; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: monospace; font-size: 12px; background: #fafafa; line-height: 1.4; }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: center; }
+    
+    .input-group { display: flex; align-items: center; gap: 5px; background: #fff; padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1; }
+    .input-group label { font-size: 11px; font-weight: bold; color: #1e40af; }
+    .input-group input { width: 45px; border: none; font-weight: 800; text-align: center; color: #1e40af; font-size: 16px; outline: none; }
+    
+    button.btn{ padding: 12px 16px; border-radius:8px; border:0; cursor:pointer; font-weight:700; font-size: 13px; transition: 0.2s; }
+    .btn-random{ background: #16a34a; color: white; flex-grow: 1; min-width: 120px; }
+    .btn-random.running { background: #ef4444; }
+    .btn-ghost{ background:#fff; border:1px solid #cbd5e1; color: #334155; }
+    
+    .status-msg { margin-top: 10px; font-size: 12px; color: #64748b; text-align: center; font-style: italic; }
+
+    .result { margin-top: 20px; }
+    .result textarea { width: 100%; height: 250px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: monospace; font-size: 13px; background: #fafafa; }
     
     @media(max-width:600px){ 
-      :root{ --cell-size:40px; --gap:4px; --separator-width:8px; }
-      body { padding-top: 80px; } /* Header mobile cần rộng rãi hơn */
-      .stat-val { font-size: 14px; }
-      .wrap { margin: 10px; }
+      :root{ --cell-size:42px; --gap:5px; --separator-width:10px; }
+      body { padding: 10px; }
+      .stat-val { font-size: 15px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="top-stats-bar">
-    <div class="stat-box"><div class="stat-label">TỔNG</div><div id="count" class="stat-val">0</div></div>
-    <div class="stat-box"><div class="stat-label">NHỎ</div><div id="lowCount" class="stat-val">0</div></div>
-    <div class="stat-box"><div class="stat-label">LỚN</div><div id="highCount" class="stat-val">0</div></div>
-    <div class="stat-box"><div class="stat-label">LƯỢT</div><div id="turnDisplay" class="stat-val" style="color:#fbbf24">0</div></div>
-    <div class="stat-box"><div class="stat-label">RESET</div><div id="resetCount" class="stat-val" style="color:#f87171">0</div></div>
-  </div>
-
   <div class="wrap">
-    <h1>68 Số - Destiny Fixed</h1>
+    <h1>Dàn 68 Số Định Mệnh</h1>
+    
     <div id="grid" class="grid"></div>
     
-    <div class="controls">
-      <div class="input-group">
-        <label>LƯỢT:</label>
-        <input type="number" id="destinyTurn" value="68">
+    <div class="controls-container">
+      <div class="stats-row">
+        <div class="stat-item"><div class="stat-label">TỔNG</div><div id="count" class="stat-val">0</div></div>
+        <div class="stat-item"><div class="stat-label">NHỎ</div><div id="lowCount" class="stat-val">0</div></div>
+        <div class="stat-item"><div class="stat-label">LỚN</div><div id="highCount" class="stat-val">0</div></div>
+        <div class="stat-item"><div class="stat-label">LƯỢT</div><div id="turnDisplay" class="stat-val" style="color:#2563eb">0</div></div>
+        <div class="stat-item"><div class="stat-label">RESET</div><div id="resetCount" class="stat-val" style="color:#dc2626">0</div></div>
       </div>
-      <button id="randomBtn" class="btn btn-random">QUAY 68 SỐ</button>
-      <button id="copyBtn" class="btn btn-ghost">COPY</button>
-      <button id="clearBtn" class="btn btn-ghost">XÓA</button>
+
+      <div class="btn-row">
+        <div class="input-group">
+          <label>LƯỢT:</label>
+          <input type="number" id="destinyTurn" value="68">
+        </div>
+        <button id="randomBtn" class="btn btn-random">QUAY 68 SỐ</button>
+        <button id="copyBtn" class="btn btn-ghost">COPY</button>
+        <button id="clearBtn" class="btn btn-ghost">XÓA</button>
+      </div>
+      
+      <div id="status" class="status-msg">Hệ thống sẵn sàng...</div>
     </div>
-    
-    <div id="status" class="status-area">Ready...</div>
 
     <div class="result"><textarea id="output" readonly></textarea></div>
   </div>
@@ -103,7 +105,6 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
   <script>
-    // Giữ nguyên toàn bộ phần Script của bạn
     const firebaseConfig = {
       apiKey: "AIzaSyD-tbxT6acKrTgAqNxHyDZHW2gD06KX1CI",
       authDomain: "my-work-a159e.firebaseapp.com",
@@ -171,7 +172,7 @@
       const target = parseInt(document.getElementById('destinyTurn').value) || 68;
       isRunning = true;
       let turn = 0, res = 0;
-      document.getElementById('randomBtn').textContent = "DỪNG LẠI";
+      document.getElementById('randomBtn').textContent = "DỪNG";
       
       timer = setInterval(() => {
         turn++;
@@ -185,14 +186,14 @@
 
         if(turn < target && ok){ res++; turn=0; }
         else if(turn === target){
-          if(ok){ clearInterval(timer); isRunning=false; document.getElementById('randomBtn').textContent="QUAY 68 SỐ"; alert("Xong!"); updateUI(true); }
+          if(ok){ clearInterval(timer); isRunning=false; document.getElementById('randomBtn').textContent="QUAY 68 SỐ"; updateUI(true); }
           else { res++; turn=0; }
         }
       }, 20);
     };
 
     async function saveToDB(arr){ try { await docRef.set({numbers:arr}); } catch(e){} }
-    document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Done!"); };
+    document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Copy!"); };
     document.getElementById('clearBtn').onclick = () => { selectedArr = []; updateUI(); document.getElementById('resetCount').textContent = "0"; document.getElementById('turnDisplay').textContent = "0"; };
     async function load(){ const d = await docRef.get(); if(d.exists){ selectedArr = d.data().numbers || []; updateUI(false); } }
     load();
