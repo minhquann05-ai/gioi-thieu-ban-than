@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>My App - Final Immortal Version</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+  <title>My App - Final Tool Version</title>
 
   <style>
     :root{
@@ -16,7 +16,7 @@
     .wrap{ max-width:800px; margin:0 auto; padding:10px; }
     h1{ margin:0 0 15px; font-size:20px; color: #14532d; text-align: center; text-transform: uppercase; }
     
-    /* GRID SẠCH CHO TOOL QUÉT TỌA ĐỘ CHUẨN */
+    /* GRID SẠCH - ĐẢM BẢO TOOL CLICK CHUẨN */
     .grid{ 
       display:grid; 
       grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr); 
@@ -56,7 +56,7 @@
     .btn-random.running { background: #ef4444; }
     .btn-ghost{ background:#fff; border:1px solid #cbd5e1; color: #334155; }
     
-    /* KHOẢNG CÁCH CHẶN GIỮA HAI PHẦN */
+    /* KHOẢNG CÁCH TRỐNG 1 MÀN HÌNH */
     .spacer-divider {
       height: 100vh; 
       display: flex;
@@ -66,12 +66,12 @@
       font-weight: bold;
       font-style: italic;
       text-align: center;
+      padding: 0 20px;
     }
 
     .result { margin-top: 20px; }
-    .result h2 { font-size: 16px; color: #475569; margin-bottom: 10px; }
+    .result h2 { font-size: 16px; color: #475569; margin-bottom: 10px; border-left: 4px solid #16a34a; padding-left: 10px; }
     
-    /* TEXTAREA CHUNG CHO KẾT QUẢ VÀ NHẬP LIỆU TỰ DO */
     textarea { 
       width: 100%; 
       padding: 12px; 
@@ -82,14 +82,18 @@
       background: #fafafa; 
       line-height: 1.6;
       box-sizing: border-box;
-      margin-bottom: 30px;
+      margin-bottom: 10px;
+      display: block;
     }
 
-    .custom-notes { background: #fffbeb !important; border: 1px solid #fcd34d !important; height: 200px; }
+    .custom-notes { background: #fffbeb !important; border: 1px solid #fcd34d !important; height: 180px; }
+    .btn-copy-notes { background: #f59e0b; color: white; width: 100%; margin-bottom: 40px; }
+    .btn-copy-notes:hover { background: #d97706; }
 
     @media(max-width:600px){ 
       :root{ --cell-size:42px; --gap:5px; --separator-width:10px; }
       body { padding: 10px; }
+      .spacer-divider { font-size: 14px; }
     }
   </style>
 </head>
@@ -115,7 +119,7 @@
           <input type="number" id="destinyTurn" value="68">
         </div>
         <button id="randomBtn" class="btn btn-random">QUAY 68 SỐ</button>
-        <button id="copyBtn" class="btn btn-ghost">COPY</button>
+        <button id="copyBtn" class="btn btn-ghost">COPY DÀN</button>
         <button id="clearBtn" class="btn btn-ghost">XÓA</button>
       </div>
     </div>
@@ -123,11 +127,12 @@
     <div class="spacer-divider">▼ Cuộn xuống 1 màn hình để xem Kết quả & Ghi chú ▼</div>
 
     <div class="result">
-      <h2>KẾT QUẢ DÀN SỐ (INPUT ORDER)</h2>
-      <textarea id="output" readonly placeholder="Dàn số sẽ xuất hiện tại đây..."></textarea>
+      <h2>KẾT QUẢ DÀN SỐ (THỨ TỰ CHỌN)</h2>
+      <textarea id="output" readonly placeholder="Dàn số sẽ hiện ở đây..."></textarea>
       
-      <h2>GHI CHÚ / DỮ LIỆU TỰ DO (Tự lưu)</h2>
-      <textarea id="freeInput" class="custom-notes" placeholder="Bạn có thể nhập bất cứ thứ gì ở đây (Proxy, dàn dự phòng, lưu ý...)..."></textarea>
+      <h2>GHI CHÚ / DỮ LIỆU TỰ DO</h2>
+      <textarea id="freeInput" class="custom-notes" placeholder="Nhập Proxy, tài khoản hoặc ghi chú tại đây..."></textarea>
+      <button id="copyNotesBtn" class="btn btn-copy-notes">SAO CHÉP GHI CHÚ</button>
     </div>
   </div>
 
@@ -150,7 +155,7 @@
     let selectedArr = []; 
     let isRunning = false;
 
-    // --- KHỞI TẠO GRID ---
+    // --- GRID ---
     const grid = document.getElementById('grid');
     for(let row=0; row<10; row++){
       for(let col=0; col<11; col++){
@@ -179,12 +184,11 @@
       document.getElementById('highCount').textContent = high;
 
       let displayLines = [];
-      let currentSelection = [...selectedArr]; 
       const labels = ["0x","1x","2x","3x","4x","5x","6x","7x","8x"];
       const limits = [9, 19, 29, 39, 49, 59, 69, 79, 89];
       for (let i = 0; i < limits.length; i++) {
-        lines = currentSelection.slice(0, limits[i]);
-        displayLines.push(`${labels[i]}: ${lines.join(', ')}`);
+        let currentPart = selectedArr.slice(0, limits[i]);
+        displayLines.push(`${labels[i]}: ${currentPart.join(', ')}`);
       }
       document.getElementById('output').value = displayLines.join('\n\n');
       document.querySelectorAll('.cell').forEach(c => c.classList.toggle('selected', selectedArr.includes(c.dataset.value)));
@@ -222,13 +226,16 @@
       }, 20);
     };
 
-    // --- LOGIC CHO Ô NHẬP LIỆU TỰ DO ---
+    // --- GHI CHÚ ---
     const freeInput = document.getElementById('freeInput');
-    // Load dữ liệu cũ từ localStorage
     freeInput.value = localStorage.getItem('my_free_notes') || "";
-    // Lưu mỗi khi người dùng nhập
-    freeInput.oninput = () => {
-      localStorage.setItem('my_free_notes', freeInput.value);
+    freeInput.oninput = () => { localStorage.setItem('my_free_notes', freeInput.value); };
+
+    // NÚT SAO CHÉP GHI CHÚ
+    document.getElementById('copyNotesBtn').onclick = () => {
+      if(!freeInput.value) { alert("Chưa có nội dung để copy!"); return; }
+      navigator.clipboard.writeText(freeInput.value);
+      alert("Đã copy ghi chú!");
     };
 
     async function saveToDB(arr){ try { await docRef.set({numbers:arr}); } catch(e){} }
