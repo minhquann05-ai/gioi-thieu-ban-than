@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <title>My App - Final Tool Version</title>
+  <title>My App - Lộc Phát 68 Immortal Sync</title>
 
   <style>
     :root{
@@ -16,7 +16,7 @@
     .wrap{ max-width:800px; margin:0 auto; padding:10px; }
     h1{ margin:0 0 15px; font-size:20px; color: #14532d; text-align: center; text-transform: uppercase; }
     
-    /* GRID SẠCH - ĐẢM BẢO TOOL CLICK CHUẨN */
+    /* GRID TRÊN CÙNG - KHÔNG CÓ HEADER ĐÈ LÊN */
     .grid{ 
       display:grid; 
       grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr); 
@@ -56,7 +56,7 @@
     .btn-random.running { background: #ef4444; }
     .btn-ghost{ background:#fff; border:1px solid #cbd5e1; color: #334155; }
     
-    /* KHOẢNG CÁCH TRỐNG 1 MÀN HÌNH */
+    /* KHOẢNG CÁCH CHẶN 1 MÀN HÌNH */
     .spacer-divider {
       height: 100vh; 
       display: flex;
@@ -66,7 +66,6 @@
       font-weight: bold;
       font-style: italic;
       text-align: center;
-      padding: 0 20px;
     }
 
     .result { margin-top: 20px; }
@@ -83,17 +82,14 @@
       line-height: 1.6;
       box-sizing: border-box;
       margin-bottom: 10px;
-      display: block;
     }
 
     .custom-notes { background: #fffbeb !important; border: 1px solid #fcd34d !important; height: 180px; }
-    .btn-copy-notes { background: #f59e0b; color: white; width: 100%; margin-bottom: 40px; }
-    .btn-copy-notes:hover { background: #d97706; }
+    .btn-copy-notes { background: #f59e0b; color: white; width: 100%; margin-bottom: 100px; }
 
     @media(max-width:600px){ 
       :root{ --cell-size:42px; --gap:5px; --separator-width:10px; }
       body { padding: 10px; }
-      .spacer-divider { font-size: 14px; }
     }
   </style>
 </head>
@@ -124,14 +120,14 @@
       </div>
     </div>
 
-    <div class="spacer-divider">▼ Cuộn xuống 1 màn hình để xem Kết quả & Ghi chú ▼</div>
+    <div class="spacer-divider">▼ Cuộn xuống để xem Kết quả & Ghi chú ▼</div>
 
     <div class="result">
       <h2>KẾT QUẢ DÀN SỐ (THỨ TỰ CHỌN)</h2>
-      <textarea id="output" readonly placeholder="Dàn số sẽ hiện ở đây..."></textarea>
+      <textarea id="output" readonly placeholder="Dàn số..."></textarea>
       
-      <h2>GHI CHÚ / DỮ LIỆU TỰ DO</h2>
-      <textarea id="freeInput" class="custom-notes" placeholder="Nhập Proxy, tài khoản hoặc ghi chú tại đây..."></textarea>
+      <h2>GHI CHÚ / PROXY (ĐỒNG BỘ)</h2>
+      <textarea id="freeInput" class="custom-notes" placeholder="Nhập bất cứ thứ gì..."></textarea>
       <button id="copyNotesBtn" class="btn btn-copy-notes">SAO CHÉP GHI CHÚ</button>
     </div>
   </div>
@@ -154,8 +150,9 @@
     
     let selectedArr = []; 
     let isRunning = false;
+    const freeInput = document.getElementById('freeInput');
 
-    // --- GRID ---
+    // GRID
     const grid = document.getElementById('grid');
     for(let row=0; row<10; row++){
       for(let col=0; col<11; col++){
@@ -187,13 +184,28 @@
       const labels = ["0x","1x","2x","3x","4x","5x","6x","7x","8x"];
       const limits = [9, 19, 29, 39, 49, 59, 69, 79, 89];
       for (let i = 0; i < limits.length; i++) {
-        let currentPart = selectedArr.slice(0, limits[i]);
-        displayLines.push(`${labels[i]}: ${currentPart.join(', ')}`);
+        let items = selectedArr.slice(0, limits[i]);
+        displayLines.push(`${labels[i]}: ${items.join(', ')}`);
       }
       document.getElementById('output').value = displayLines.join('\n\n');
       document.querySelectorAll('.cell').forEach(c => c.classList.toggle('selected', selectedArr.includes(c.dataset.value)));
-      if(saveDb) saveToDB(selectedArr);
+      if(saveDb) saveToDB(selectedArr, freeInput.value);
     }
+
+    // SYNC DATABASE (SỐ & GHI CHÚ)
+    async function saveToDB(arr, notes) {
+      try {
+        await docRef.set({ numbers: arr, notes: notes }, { merge: true });
+      } catch(e) {}
+    }
+
+    let typingTimer;
+    freeInput.oninput = () => {
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(() => {
+        saveToDB(selectedArr, freeInput.value);
+      }, 1000);
+    };
 
     function checkValid(batch) {
       let h={0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0}, t={0:0,1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0};
@@ -226,22 +238,21 @@
       }, 20);
     };
 
-    // --- GHI CHÚ ---
-    const freeInput = document.getElementById('freeInput');
-    freeInput.value = localStorage.getItem('my_free_notes') || "";
-    freeInput.oninput = () => { localStorage.setItem('my_free_notes', freeInput.value); };
-
-    // NÚT SAO CHÉP GHI CHÚ
-    document.getElementById('copyNotesBtn').onclick = () => {
-      if(!freeInput.value) { alert("Chưa có nội dung để copy!"); return; }
-      navigator.clipboard.writeText(freeInput.value);
-      alert("Đã copy ghi chú!");
-    };
-
-    async function saveToDB(arr){ try { await docRef.set({numbers:arr}); } catch(e){} }
-    document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Đã copy dàn số!"); };
+    document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Copy dàn số!"); };
+    document.getElementById('copyNotesBtn').onclick = () => { navigator.clipboard.writeText(freeInput.value); alert("Copy ghi chú!"); };
     document.getElementById('clearBtn').onclick = () => { selectedArr = []; updateUI(); document.getElementById('resetCount').textContent = "0"; document.getElementById('turnDisplay').textContent = "0"; };
-    async function load(){ const d = await docRef.get(); if(d.exists){ selectedArr = d.data().numbers || []; updateUI(false); } }
+    
+    async function load(){
+      try {
+        const doc = await docRef.get();
+        if(doc.exists){
+          const data = doc.data();
+          selectedArr = data.numbers || [];
+          freeInput.value = data.notes || "";
+          updateUI(false);
+        }
+      } catch(e){}
+    }
     load();
   </script>
 </body>
