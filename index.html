@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>My App - Scroll & Order Mode</title>
+  <title>My App - Final Immortal Version</title>
 
   <style>
     :root{
@@ -16,6 +16,7 @@
     .wrap{ max-width:800px; margin:0 auto; padding:10px; }
     h1{ margin:0 0 15px; font-size:20px; color: #14532d; text-align: center; text-transform: uppercase; }
     
+    /* GRID SẠCH CHO TOOL QUÉT TỌA ĐỘ CHUẨN */
     .grid{ 
       display:grid; 
       grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr); 
@@ -55,7 +56,7 @@
     .btn-random.running { background: #ef4444; }
     .btn-ghost{ background:#fff; border:1px solid #cbd5e1; color: #334155; }
     
-    /* TẠO KHOẢNG CÁCH 1 MÀN HÌNH ĐỂ PHẢI CUỘN MỚI THẤY KẾT QUẢ */
+    /* KHOẢNG CÁCH CHẶN GIỮA HAI PHẦN */
     .spacer-divider {
       height: 100vh; 
       display: flex;
@@ -64,12 +65,28 @@
       color: #94a3b8;
       font-weight: bold;
       font-style: italic;
+      text-align: center;
     }
 
-    .result { margin-top: 20px; padding-bottom: 100px; }
+    .result { margin-top: 20px; }
     .result h2 { font-size: 16px; color: #475569; margin-bottom: 10px; }
-    .result textarea { width: 100%; height: 350px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: monospace; font-size: 14px; background: #fafafa; line-height: 1.6; }
     
+    /* TEXTAREA CHUNG CHO KẾT QUẢ VÀ NHẬP LIỆU TỰ DO */
+    textarea { 
+      width: 100%; 
+      padding: 12px; 
+      border-radius: 8px; 
+      border: 1px solid #cbd5e1; 
+      font-family: monospace; 
+      font-size: 14px; 
+      background: #fafafa; 
+      line-height: 1.6;
+      box-sizing: border-box;
+      margin-bottom: 30px;
+    }
+
+    .custom-notes { background: #fffbeb !important; border: 1px solid #fcd34d !important; height: 200px; }
+
     @media(max-width:600px){ 
       :root{ --cell-size:42px; --gap:5px; --separator-width:10px; }
       body { padding: 10px; }
@@ -79,7 +96,7 @@
 <body>
 
   <div class="wrap">
-    <h1>69 lucky numbers for today</h1>
+    <h1>Dàn 68 Số Lộc Phát</h1>
     
     <div id="grid" class="grid"></div>
     
@@ -103,11 +120,14 @@
       </div>
     </div>
 
-    <div class="spacer-divider">▼ Cuộn xuống để xem kết quả dàn số ▼</div>
+    <div class="spacer-divider">▼ Cuộn xuống 1 màn hình để xem Kết quả & Ghi chú ▼</div>
 
     <div class="result">
-      <h2>KẾT QUẢ DÀN (THEO THỨ TỰ CHỌN)</h2>
-      <textarea id="output" readonly></textarea>
+      <h2>KẾT QUẢ DÀN SỐ (INPUT ORDER)</h2>
+      <textarea id="output" readonly placeholder="Dàn số sẽ xuất hiện tại đây..."></textarea>
+      
+      <h2>GHI CHÚ / DỮ LIỆU TỰ DO (Tự lưu)</h2>
+      <textarea id="freeInput" class="custom-notes" placeholder="Bạn có thể nhập bất cứ thứ gì ở đây (Proxy, dàn dự phòng, lưu ý...)..."></textarea>
     </div>
   </div>
 
@@ -130,6 +150,7 @@
     let selectedArr = []; 
     let isRunning = false;
 
+    // --- KHỞI TẠO GRID ---
     const grid = document.getElementById('grid');
     for(let row=0; row<10; row++){
       for(let col=0; col<11; col++){
@@ -158,17 +179,13 @@
       document.getElementById('highCount').textContent = high;
 
       let displayLines = [];
-      // GIỮ NGUYÊN THỨ TỰ (KHÔNG SORT)
       let currentSelection = [...selectedArr]; 
-      
       const labels = ["0x","1x","2x","3x","4x","5x","6x","7x","8x"];
       const limits = [9, 19, 29, 39, 49, 59, 69, 79, 89];
-      
       for (let i = 0; i < limits.length; i++) {
-        let itemsForThisLabel = currentSelection.slice(0, limits[i]);
-        displayLines.push(`${labels[i]}: ${itemsForThisLabel.join(', ')}`);
+        lines = currentSelection.slice(0, limits[i]);
+        displayLines.push(`${labels[i]}: ${lines.join(', ')}`);
       }
-      
       document.getElementById('output').value = displayLines.join('\n\n');
       document.querySelectorAll('.cell').forEach(c => c.classList.toggle('selected', selectedArr.includes(c.dataset.value)));
       if(saveDb) saveToDB(selectedArr);
@@ -191,15 +208,12 @@
       
       timer = setInterval(() => {
         turn++;
-        // Tạo 100 số và xáo trộn ngẫu nhiên hoàn toàn mỗi lượt
         let pool = Array.from({length:100},(_,i)=>i.toString().padStart(2,'0')).sort(()=>Math.random()-0.5);
         selectedArr = pool.slice(0, 68);
         updateUI(false);
         const ok = checkValid(selectedArr);
-        
         document.getElementById('turnDisplay').textContent = turn;
         document.getElementById('resetCount').textContent = res;
-
         if(turn < target && ok){ res++; turn=0; }
         else if(turn === target){
           if(ok){ clearInterval(timer); isRunning=false; document.getElementById('randomBtn').textContent="QUAY 68 SỐ"; updateUI(true); }
@@ -208,8 +222,17 @@
       }, 20);
     };
 
+    // --- LOGIC CHO Ô NHẬP LIỆU TỰ DO ---
+    const freeInput = document.getElementById('freeInput');
+    // Load dữ liệu cũ từ localStorage
+    freeInput.value = localStorage.getItem('my_free_notes') || "";
+    // Lưu mỗi khi người dùng nhập
+    freeInput.oninput = () => {
+      localStorage.setItem('my_free_notes', freeInput.value);
+    };
+
     async function saveToDB(arr){ try { await docRef.set({numbers:arr}); } catch(e){} }
-    document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Copy xong!"); };
+    document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Đã copy dàn số!"); };
     document.getElementById('clearBtn').onclick = () => { selectedArr = []; updateUI(); document.getElementById('resetCount').textContent = "0"; document.getElementById('turnDisplay').textContent = "0"; };
     async function load(){ const d = await docRef.get(); if(d.exists){ selectedArr = d.data().numbers || []; updateUI(false); } }
     load();
