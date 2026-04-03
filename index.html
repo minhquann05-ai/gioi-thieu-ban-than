@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <title>My App - Lộc Phát 68 Immortal Sync</title>
+  <title>My App - Lộc Phát 68 Sync & Refresh</title>
 
   <style>
     :root{
@@ -16,7 +16,7 @@
     .wrap{ max-width:800px; margin:0 auto; padding:10px; }
     h1{ margin:0 0 15px; font-size:20px; color: #14532d; text-align: center; text-transform: uppercase; }
     
-    /* GRID TRÊN CÙNG - KHÔNG CÓ HEADER ĐÈ LÊN */
+    /* GRID TRÊN CÙNG - TOOL FRIENDLY */
     .grid{ 
       display:grid; 
       grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr); 
@@ -55,8 +55,8 @@
     .btn-random{ background: #16a34a; color: white; flex-grow: 1; min-width: 120px; }
     .btn-random.running { background: #ef4444; }
     .btn-ghost{ background:#fff; border:1px solid #cbd5e1; color: #334155; }
-    
-    /* KHOẢNG CÁCH CHẶN 1 MÀN HÌNH */
+    .btn-f5 { background: #64748b; color: white; } /* Màu xám đá cho nút F5 */
+
     .spacer-divider {
       height: 100vh; 
       display: flex;
@@ -72,16 +72,9 @@
     .result h2 { font-size: 16px; color: #475569; margin-bottom: 10px; border-left: 4px solid #16a34a; padding-left: 10px; }
     
     textarea { 
-      width: 100%; 
-      padding: 12px; 
-      border-radius: 8px; 
-      border: 1px solid #cbd5e1; 
-      font-family: monospace; 
-      font-size: 14px; 
-      background: #fafafa; 
-      line-height: 1.6;
-      box-sizing: border-box;
-      margin-bottom: 10px;
+      width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; 
+      font-family: monospace; font-size: 14px; background: #fafafa; line-height: 1.6;
+      box-sizing: border-box; margin-bottom: 10px;
     }
 
     .custom-notes { background: #fffbeb !important; border: 1px solid #fcd34d !important; height: 180px; }
@@ -115,6 +108,7 @@
           <input type="number" id="destinyTurn" value="68">
         </div>
         <button id="randomBtn" class="btn btn-random">QUAY 68 SỐ</button>
+        <button id="f5Btn" class="btn btn-f5">F5</button>
         <button id="copyBtn" class="btn btn-ghost">COPY DÀN</button>
         <button id="clearBtn" class="btn btn-ghost">XÓA</button>
       </div>
@@ -192,7 +186,6 @@
       if(saveDb) saveToDB(selectedArr, freeInput.value);
     }
 
-    // SYNC DATABASE (SỐ & GHI CHÚ)
     async function saveToDB(arr, notes) {
       try {
         await docRef.set({ numbers: arr, notes: notes }, { merge: true });
@@ -236,6 +229,11 @@
           else { res++; turn=0; }
         }
       }, 20);
+    };
+
+    // NÚT F5 LÀM MỚI TRANG
+    document.getElementById('f5Btn').onclick = () => {
+      location.reload();
     };
 
     document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Copy dàn số!"); };
