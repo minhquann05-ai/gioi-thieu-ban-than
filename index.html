@@ -15,7 +15,6 @@
     .wrap{ max-width:800px; margin:0 auto; padding:10px; }
     h1{ margin:0 0 15px; font-size:20px; color: #14532d; text-align: center; text-transform: uppercase; }
    
-    /* GRID TRÊN CÙNG - TOOL FRIENDLY */
     .grid{
       display:grid;
       grid-template-columns: repeat(5, 1fr) var(--separator-width) repeat(5, 1fr);
@@ -74,7 +73,6 @@
     .custom-notes { background: #fffbeb !important; border: 1px solid #fcd34d !important; height: 180px; }
     .btn-copy-notes { background: #f59e0b; color: white; width: 100%; margin-bottom: 100px; }
 
-    /* NÚT COPY 6X RIÊNG NGAY GẦN Ô DÀN */
     .copy6x-wrapper {
       margin-bottom: 25px;
     }
@@ -129,7 +127,6 @@
       <h2>KẾT QUẢ DÀN SỐ (THỨ TỰ CHỌN)</h2>
       <textarea id="output" readonly placeholder="Dàn số..."></textarea>
       
-      <!-- NÚT RIÊNG NGAY GẦN Ô DÀN -->
       <div class="copy6x-wrapper">
         <button id="copy6xBtn" class="btn">
           📋 SAO CHÉP DÀN 6X
@@ -161,7 +158,6 @@
     let isRunning = false;
     const freeInput = document.getElementById('freeInput');
     
-    // GRID
     const grid = document.getElementById('grid');
     for(let row=0; row<10; row++){
       for(let col=0; col<11; col++){
@@ -244,7 +240,7 @@
       alert("Copy dàn số!"); 
     };
 
-    // ====================== NÚT SAO CHÉP DÀN 6X (đúng như trong ô kết quả) ======================
+    // ====================== NÚT SAO CHÉP DÀN 6X (CHỈ COPY CÁC SỐ) ======================
     document.getElementById('copy6xBtn').onclick = () => {
       const outputText = document.getElementById('output').value.trim();
       if (!outputText) {
@@ -256,8 +252,11 @@
       const sixXLine = lines.find(line => line.trim().startsWith('6x:'));
       
       if (sixXLine) {
-        navigator.clipboard.writeText(sixXLine).then(() => {
-          alert(`✅ Đã sao chép DÀN 6X:\n${sixXLine}`);
+        // Chỉ lấy phần sau dấu ":" và bỏ khoảng trắng thừa
+        const numbersOnly = sixXLine.split(':')[1].trim();
+        
+        navigator.clipboard.writeText(numbersOnly).then(() => {
+          alert(`✅ Đã sao chép dàn 6X:\n${numbersOnly}`);
         }).catch(() => {
           alert("❌ Không thể sao chép (trình duyệt chặn)");
         });
@@ -265,7 +264,7 @@
         alert("⚠️ Chưa có dàn 6X nào");
       }
     };
-    // =========================================================================================
+    // ==================================================================================
 
     document.getElementById('copyNotesBtn').onclick = () => { 
       navigator.clipboard.writeText(freeInput.value); 
