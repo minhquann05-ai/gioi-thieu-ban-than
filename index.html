@@ -52,7 +52,7 @@
     .btn-random{ background: #16a34a; color: white; flex-grow: 1; min-width: 120px; }
     .btn-random.running { background: #ef4444; }
     .btn-ghost{ background:#fff; border:1px solid #cbd5e1; color: #334155; }
-    .btn-f5 { background: #64748b; color: white; } /* Màu xám đá cho nút F5 */
+    .btn-f5 { background: #64748b; color: white; }
     .spacer-divider {
       height: 100vh;
       display: flex;
@@ -129,7 +129,7 @@
       <h2>KẾT QUẢ DÀN SỐ (THỨ TỰ CHỌN)</h2>
       <textarea id="output" readonly placeholder="Dàn số..."></textarea>
       
-      <!-- NÚT RIÊNG NGAY GẦN Ô DÀN (đặt sát bên dưới textarea) -->
+      <!-- NÚT RIÊNG NGAY GẦN Ô DÀN -->
       <div class="copy6x-wrapper">
         <button id="copy6xBtn" class="btn">
           📋 SAO CHÉP DÀN 6X
@@ -160,6 +160,7 @@
     let selectedArr = [];
     let isRunning = false;
     const freeInput = document.getElementById('freeInput');
+    
     // GRID
     const grid = document.getElementById('grid');
     for(let row=0; row<10; row++){
@@ -237,32 +238,39 @@
         }
       }, 20);
     };
-    // NÚT F5 LÀM MỚI TRANG
-    document.getElementById('f5Btn').onclick = () => {
-      location.reload();
+    document.getElementById('f5Btn').onclick = () => { location.reload(); };
+    document.getElementById('copyBtn').onclick = () => { 
+      navigator.clipboard.writeText(document.getElementById('output').value); 
+      alert("Copy dàn số!"); 
     };
-    document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Copy dàn số!"); };
-    
-    // ==================== NÚT SAO CHÉP DÀN 6X (đặt RIÊNG ngay dưới ô dàn) ====================
+
+    // ====================== NÚT SAO CHÉP DÀN 6X (đúng như trong ô kết quả) ======================
     document.getElementById('copy6xBtn').onclick = () => {
-      const sixX = selectedArr
-        .filter(n => n.startsWith('6'))
-        .sort((a, b) => parseInt(a) - parseInt(b))
-        .join(', ');
+      const outputText = document.getElementById('output').value.trim();
+      if (!outputText) {
+        alert("⚠️ Chưa có dàn số nào");
+        return;
+      }
       
-      if (sixX.length > 0) {
-        navigator.clipboard.writeText(sixX).then(() => {
-          alert(`✅ Đã sao chép dàn 6X:\n${sixX}`);
+      const lines = outputText.split('\n\n');
+      const sixXLine = lines.find(line => line.trim().startsWith('6x:'));
+      
+      if (sixXLine) {
+        navigator.clipboard.writeText(sixXLine).then(() => {
+          alert(`✅ Đã sao chép DÀN 6X:\n${sixXLine}`);
         }).catch(() => {
           alert("❌ Không thể sao chép (trình duyệt chặn)");
         });
       } else {
-        alert("⚠️ Hiện chưa có số nào trong dàn 6X");
+        alert("⚠️ Chưa có dàn 6X nào");
       }
     };
-    // ======================================================================================
-    
-    document.getElementById('copyNotesBtn').onclick = () => { navigator.clipboard.writeText(freeInput.value); alert("Copy ghi chú!"); };
+    // =========================================================================================
+
+    document.getElementById('copyNotesBtn').onclick = () => { 
+      navigator.clipboard.writeText(freeInput.value); 
+      alert("Copy ghi chú!"); 
+    };
     document.getElementById('clearBtn').onclick = () => { 
       selectedArr = []; 
       updateUI(); 
