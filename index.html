@@ -69,10 +69,30 @@
     textarea {
       width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1;
       font-family: monospace; font-size: 14px; background: #fafafa; line-height: 1.6;
-      box-sizing: border-box; margin-bottom: 10px;
+      box-sizing: border-box; margin-bottom: 8px;
     }
     .custom-notes { background: #fffbeb !important; border: 1px solid #fcd34d !important; height: 180px; }
     .btn-copy-notes { background: #f59e0b; color: white; width: 100%; margin-bottom: 100px; }
+
+    /* NÚT COPY 6X RIÊNG NGAY GẦN Ô DÀN */
+    .copy6x-wrapper {
+      margin-bottom: 25px;
+    }
+    #copy6xBtn {
+      width: 100%;
+      font-size: 14px;
+      padding: 14px;
+      background: #16a34a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    #copy6xBtn:hover {
+      background: #158f3f;
+    }
+
     @media(max-width:600px){
       :root{ --cell-size:42px; --gap:5px; --separator-width:10px; }
       body { padding: 10px; }
@@ -109,10 +129,12 @@
       <h2>KẾT QUẢ DÀN SỐ (THỨ TỰ CHỌN)</h2>
       <textarea id="output" readonly placeholder="Dàn số..."></textarea>
       
-      <!-- NÚT MỚI: SAO CHÉP CHỈ DÀN 6X -->
-      <button id="copy6xBtn" class="btn btn-ghost" style="margin: 8px 0 20px 0; width: 100%; font-size: 14px;">
-        📋 SAO CHÉP DÀN 6X
-      </button>
+      <!-- NÚT RIÊNG NGAY GẦN Ô DÀN (đặt sát bên dưới textarea) -->
+      <div class="copy6x-wrapper">
+        <button id="copy6xBtn" class="btn">
+          📋 SAO CHÉP DÀN 6X
+        </button>
+      </div>
      
       <h2>GHI CHÚ / PROXY (ĐỒNG BỘ)</h2>
       <textarea id="freeInput" class="custom-notes" placeholder="Nhập bất cứ thứ gì..."></textarea>
@@ -221,11 +243,11 @@
     };
     document.getElementById('copyBtn').onclick = () => { navigator.clipboard.writeText(document.getElementById('output').value); alert("Copy dàn số!"); };
     
-    // ==================== NÚT MỚI: SAO CHÉP CHỈ DÀN 6X ====================
+    // ==================== NÚT SAO CHÉP DÀN 6X (đặt RIÊNG ngay dưới ô dàn) ====================
     document.getElementById('copy6xBtn').onclick = () => {
       const sixX = selectedArr
-        .filter(n => n.startsWith('6'))           // chỉ lấy số 60-69
-        .sort((a, b) => parseInt(a) - parseInt(b)) // sắp xếp tăng dần cho đẹp
+        .filter(n => n.startsWith('6'))
+        .sort((a, b) => parseInt(a) - parseInt(b))
         .join(', ');
       
       if (sixX.length > 0) {
@@ -238,7 +260,7 @@
         alert("⚠️ Hiện chưa có số nào trong dàn 6X");
       }
     };
-    // =====================================================================
+    // ======================================================================================
     
     document.getElementById('copyNotesBtn').onclick = () => { navigator.clipboard.writeText(freeInput.value); alert("Copy ghi chú!"); };
     document.getElementById('clearBtn').onclick = () => { 
